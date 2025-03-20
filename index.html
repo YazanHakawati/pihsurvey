@@ -24,7 +24,7 @@
         <label>حساسات الغاز: <select id="gas_sensors"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
         <label>كبسة بويلر: <select id="boiler_button"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
         <label>نظام الدخول الذكي: <select id="smart_entry"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
-        <label>وحدة التحكم عالية الجودة: <select id="high_quality_controller"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
+        <label>نظام بريميوم PIH: <select id="premium_system"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
         <label>المساعد الصوتي: <select id="voice_assistant"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
         <label>عدد الأبجورات الذكية: <input type="number" id="num_shutters" min="0" value="4"></label><br>
         <label>المدينة:
@@ -43,59 +43,117 @@
         </label><br>
         <button onclick="calculatePrice()">حساب السعر</button>
         <h3>السعر المقدر: <span id="estimated_price">-</span> شيكل</h3>
+        <div id="invoice" style="display:none;">
+    <h4>فاتورة التكلفة</h4>
+    <p>نظام الإضاءة: <span id="lighting_cost">0</span> شيكل</p>
+    <p>نظام الأبجورات: <span id="shutters_cost">0</span> شيكل</p>
+    <p>نظام الحساسات: <span id="sensors_cost">0</span> شيكل</p>
+    <p>نظام المساعد الصوتي: <span id="voice_assistant_cost">0</span> شيكل</p>
+    <p>نظام الدخول الذكي: <span id="smart_entry_cost">0</span> شيكل</p>
+    <p>نظام بريميوم PIH: <span id="premium_system_cost">0</span> شيكل</p>
+</div>
+<div id="disclaimer">
+    <p style="color: red; font-size: 14px; text-align: center;">
+        هذه القيمة تقديرية بشكل سطحي. لمعرفة تكلفة منزلك الحقيقية، يجب على مهندسي الموقع أن يعاينوا المنزل على أرض الواقع. للتواصل:<br>
+        <a href="https://wa.me/972566334569" style="color: red; text-decoration: underline;">Whatsapp: +972 56-633-4569</a>
+    </p>
+</div>
     </div>
     <script>
         function calculatePrice() {
-            let floors = Math.max(1, parseInt(document.getElementById('num_floors').value) || 1);
-            let area = Math.max(120, parseInt(document.getElementById('floor_area').value) || 120);
-            let bedrooms = Math.max(0, parseInt(document.getElementById('num_bedrooms').value) || 0);
-            let bathrooms = Math.max(0, parseInt(document.getElementById('num_bathrooms').value) || 0);
-            let salons = Math.max(0, parseInt(document.getElementById('num_salons').value) || 0);
-            let kitchens = Math.max(0, parseInt(document.getElementById('num_kitchens').value) || 0);
-            let shutters = Math.max(0, parseInt(document.getElementById('num_shutters').value) || 0);
-            
-            let hasMotionSensors = parseInt(document.getElementById('motion_sensors').value) === 1;
-            let hasGasSensors = parseInt(document.getElementById('gas_sensors').value) === 1;
-            let hasBoilerButton = parseInt(document.getElementById('boiler_button').value) === 1;
-            let hasSmartEntry = parseInt(document.getElementById('smart_entry').value) === 1;
-            let hasHighQualityController = parseInt(document.getElementById('high_quality_controller').value) === 1;
-            let hasVoiceAssistant = parseInt(document.getElementById('voice_assistant').value) === 1;
-            
-            let bedroomsCost = bedrooms * 572;
-            let bathroomsCost = bathrooms * 323;
-            let motionSensorsCost = hasMotionSensors ? (salons * 3 + bathrooms) * 82 : 0;
-            let gasSensorsCost = hasGasSensors ? kitchens * 113 : 0;
-            let boilerButtonCost = hasBoilerButton ? 120 : 0;
-            let smartEntryCost = hasSmartEntry ? 962 : 0;
-            let controllerCost = hasHighQualityController ? 1963 : 0;
-            let voiceAssistantCost = hasVoiceAssistant ? 1200 : 0;
-            let shuttersCost = shutters * 120;
-            
-            let basePrice = bedroomsCost + bathroomsCost + motionSensorsCost + gasSensorsCost + 
-                            boilerButtonCost + smartEntryCost + controllerCost + voiceAssistantCost + shuttersCost;
-            
-            let areaFactor = 1 + Math.min(2, (area - 120) * 0.005);
-            let pricePerFloor = basePrice * areaFactor;
-            
-            let transportCosts = {
-                "جنين": 600, "سلفيت": 450, "نابلس": 350, "رام الله": 450,
-                "الخليل": 1200, "بيت لحم": 1000, "طوباس": 850, "أريحا": 1000,
-                "طولكرم": 720, "قلقيلية": 720
-            };
-            
-            let selectedCity = document.getElementById('city').value;
-            let transportCost = transportCosts[selectedCity] || 0;
-            
-            if (area > 160) {
-                let extraMeters = Math.floor((area - 160) / 10);
-                let transportIncrease = Math.min(1, extraMeters * 0.05);
-                transportCost *= (1 + transportIncrease);
-            }
-            
-            let totalPrice = (pricePerFloor * floors) + transportCost;
-            
-            document.getElementById('estimated_price').innerText = totalPrice.toFixed(2);
+    let floors = Math.max(1, parseInt(document.getElementById('num_floors').value) || 1);
+    let area = Math.max(120, parseInt(document.getElementById('floor_area').value) || 120);
+    let totalArea = area * floors; // المساحة الإجمالية
+
+    let bedrooms = Math.max(0, parseInt(document.getElementById('num_bedrooms').value) || 0);
+    let bathrooms = Math.max(0, parseInt(document.getElementById('num_bathrooms').value) || 0);
+    let salons = Math.max(0, parseInt(document.getElementById('num_salons').value) || 0);
+    let kitchens = Math.max(0, parseInt(document.getElementById('num_kitchens').value) || 0);
+    let shutters = Math.max(0, parseInt(document.getElementById('num_shutters').value) || 0);
+
+    let hasMotionSensors = parseInt(document.getElementById('motion_sensors').value) === 1;
+    let hasGasSensors = parseInt(document.getElementById('gas_sensors').value) === 1;
+    let hasBoilerButton = parseInt(document.getElementById('boiler_button').value) === 1;
+    let hasSmartEntry = parseInt(document.getElementById('smart_entry').value) === 1;
+    let hasPremiumSystem = parseInt(document.getElementById('premium_system').value) === 1;
+    let hasVoiceAssistant = parseInt(document.getElementById('voice_assistant').value) === 1;
+
+    // تكلفة نظام الإضاءة (الغرف + الحمامات)
+    let lightingCost = (bedrooms * 572) + (bathrooms * 323);
+
+    // تكلفة نظام الأبجورات (بدون البويلر)
+    let shuttersCost = shutters * 120;
+
+    // تكلفة نظام الحساسات
+    let motionSensorsCost = hasMotionSensors ? (salons * 3 + bathrooms) * 82 : 0;
+    let gasSensorsCost = hasGasSensors ? kitchens * 113 : 0;
+    let sensorsCost = motionSensorsCost + gasSensorsCost;
+
+    // تكلفة نظام المساعد الصوتي (حسب المساحة)
+    let voiceAssistantCost = 0;
+    if (hasVoiceAssistant) {
+        if (totalArea >= 165 && totalArea < 210) {
+            voiceAssistantCost = 765 * 2;
+        } else if (totalArea >= 210 && totalArea < 260) {
+            voiceAssistantCost = 765 * 3;
+        } else if (totalArea >= 260) {
+            voiceAssistantCost = 765 * 4;
+        } else {
+            voiceAssistantCost = 765;
         }
+    }
+
+    // تكلفة نظام الدخول الذكي
+    let smartEntryCost = hasSmartEntry ? 962 : 0;
+
+    // تكلفة نظام بريميوم PIH
+    let premiumSystemCost = hasPremiumSystem ? 3000 : 0;
+
+    // تكلفة البويلر (محسوبة في الخلفية ولكن غير ظاهرة في الفاتورة)
+    let boilerButtonCost = hasBoilerButton ? 120 : 0;
+
+    // المواصلات (محسوبة في الخلفية ولكن غير ظاهرة في الفاتورة)
+    let transportCosts = {
+        "جنين": 1000, "سلفيت": 450, "نابلس": 350, "رام الله": 450,
+        "الخليل": 1200, "بيت لحم": 1000, "طوباس": 850, "أريحا": 1000,
+        "طولكرم": 720, "قلقيلية": 720
+    };
+    let selectedCity = document.getElementById('city').value;
+    let transportCost = transportCosts[selectedCity] || 0;
+
+    if (totalArea > 160) {
+        let extraMeters = Math.floor((totalArea - 160) / 10);
+        let transportIncrease = Math.min(1, extraMeters * 0.05);
+        transportCost *= (1 + transportIncrease);
+    }
+
+    // توزيع تكلفة المواصلات على العناصر
+    let totalCostBeforeTransport = lightingCost + shuttersCost + sensorsCost + voiceAssistantCost + smartEntryCost + premiumSystemCost + boilerButtonCost;
+    let transportPerItem = transportCost / 6; // توزيع المواصلات على 6 عناصر
+
+    // إضافة تكلفة المواصلات إلى كل عنصر
+    lightingCost += transportPerItem;
+    shuttersCost += transportPerItem;
+    sensorsCost += transportPerItem;
+    voiceAssistantCost += transportPerItem;
+    smartEntryCost += transportPerItem;
+    premiumSystemCost += transportPerItem;
+
+    // السعر الإجمالي
+    let totalPrice = lightingCost + shuttersCost + sensorsCost + voiceAssistantCost + smartEntryCost + premiumSystemCost;
+
+    // عرض السعر المقدر
+    document.getElementById('estimated_price').innerText = totalPrice.toFixed(2);
+
+    // عرض الفاتورة
+    document.getElementById('invoice').style.display = 'block';
+    document.getElementById('lighting_cost').innerText = lightingCost.toFixed(2);
+    document.getElementById('shutters_cost').innerText = shuttersCost.toFixed(2);
+    document.getElementById('sensors_cost').innerText = sensorsCost.toFixed(2);
+    document.getElementById('voice_assistant_cost').innerText = voiceAssistantCost.toFixed(2);
+    document.getElementById('smart_entry_cost').innerText = smartEntryCost.toFixed(2);
+    document.getElementById('premium_system_cost').innerText = premiumSystemCost.toFixed(2);
+}
     </script>
 </body>
 </html>
