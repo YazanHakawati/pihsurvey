@@ -79,13 +79,13 @@
     let hasVoiceAssistant = parseInt(document.getElementById('voice_assistant').value) === 1;
 
     // تكلفة نظام الإضاءة (الغرف + الحمامات)
-    let lightingCost = (bedrooms * 572) + (bathrooms * 323);
+    let lightingCost = (bedrooms * 1132) + (bathrooms * 323);
 
     // تكلفة نظام الأبجورات (بدون البويلر)
-    let shuttersCost = shutters * 120;
+    let shuttersCost = shutters * 187;
 
     // تكلفة نظام الحساسات
-    let motionSensorsCost = hasMotionSensors ? (salons * 3 + bathrooms) * 82 : 0;
+    let motionSensorsCost = hasMotionSensors ? (salons * 3 + bathrooms) * 91 : 0;
     let gasSensorsCost = hasGasSensors ? kitchens * 113 : 0;
     let sensorsCost = motionSensorsCost + gasSensorsCost;
 
