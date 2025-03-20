@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة سعر المنزل الذكي</title>
+    <link rel="stylesheet" href="pihsurvey1.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="PIH_Cover.png" alt="PIH Logo">
+            </div>
+        </header>
+        <h2>حاسبة سعر المنزل الذكي</h2>
+        <label>عدد الطوابق: <input type="number" id="num_floors" min="1" value="1"></label><br>
+        <label>مساحة الطابق الواحد (م²): <input type="number" id="floor_area" min="120" value="120"></label><br>
+        <label>عدد غرف النوم: <input type="number" id="num_bedrooms" min="0" value="2"></label><br>
+        <label>عدد الحمامات: <input type="number" id="num_bathrooms" min="0" value="1"></label><br>
+        <label>عدد الصالونات: <input type="number" id="num_salons" min="0" value="1"></label><br>
+        <label>عدد المطابخ: <input type="number" id="num_kitchens" min="0" value="1"></label><br>
+        <label>حساسات الحركة: <select id="motion_sensors"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
+        <label>حساسات الغاز: <select id="gas_sensors"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
+        <label>كبسة بويلر: <select id="boiler_button"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
+        <label>نظام الدخول الذكي: <select id="smart_entry"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
+        <label>وحدة التحكم عالية الجودة: <select id="high_quality_controller"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
+        <label>المساعد الصوتي: <select id="voice_assistant"><option value="1">نعم</option><option value="0">لا</option></select></label><br>
+        <label>عدد الأبجورات الذكية: <input type="number" id="num_shutters" min="0" value="4"></label><br>
+        <label>المدينة:
+            <select id="city">
+                <option value="جنين">جنين</option>
+                <option value="سلفيت">سلفيت</option>
+                <option value="نابلس">نابلس</option>
+                <option value="رام الله">رام الله</option>
+                <option value="الخليل">الخليل</option>
+                <option value="بيت لحم">بيت لحم</option>
+                <option value="طوباس">طوباس</option>
+                <option value="أريحا">أريحا</option>
+                <option value="قلقيلية">قلقيلية</option>
+                <option value="طولكرم">طولكرم</option>
+            </select>
+        </label><br>
+        <button onclick="calculatePrice()">حساب السعر</button>
+        <h3>السعر المقدر: <span id="estimated_price">-</span> شيكل</h3>
+    </div>
+    <script>
+        function calculatePrice() {
+            let floors = Math.max(1, parseInt(document.getElementById('num_floors').value) || 1);
+            let area = Math.max(120, parseInt(document.getElementById('floor_area').value) || 120);
+            let bedrooms = Math.max(0, parseInt(document.getElementById('num_bedrooms').value) || 0);
+            let bathrooms = Math.max(0, parseInt(document.getElementById('num_bathrooms').value) || 0);
+            let salons = Math.max(0, parseInt(document.getElementById('num_salons').value) || 0);
+            let kitchens = Math.max(0, parseInt(document.getElementById('num_kitchens').value) || 0);
+            let shutters = Math.max(0, parseInt(document.getElementById('num_shutters').value) || 0);
+            
+            let hasMotionSensors = parseInt(document.getElementById('motion_sensors').value) === 1;
+            let hasGasSensors = parseInt(document.getElementById('gas_sensors').value) === 1;
+            let hasBoilerButton = parseInt(document.getElementById('boiler_button').value) === 1;
+            let hasSmartEntry = parseInt(document.getElementById('smart_entry').value) === 1;
+            let hasHighQualityController = parseInt(document.getElementById('high_quality_controller').value) === 1;
+            let hasVoiceAssistant = parseInt(document.getElementById('voice_assistant').value) === 1;
+            
+            let bedroomsCost = bedrooms * 572;
+            let bathroomsCost = bathrooms * 323;
+            let motionSensorsCost = hasMotionSensors ? (salons * 3 + bathrooms) * 82 : 0;
+            let gasSensorsCost = hasGasSensors ? kitchens * 113 : 0;
+            let boilerButtonCost = hasBoilerButton ? 120 : 0;
+            let smartEntryCost = hasSmartEntry ? 962 : 0;
+            let controllerCost = hasHighQualityController ? 1963 : 0;
+            let voiceAssistantCost = hasVoiceAssistant ? 1200 : 0;
+            let shuttersCost = shutters * 120;
+            
+            let basePrice = bedroomsCost + bathroomsCost + motionSensorsCost + gasSensorsCost + 
+                            boilerButtonCost + smartEntryCost + controllerCost + voiceAssistantCost + shuttersCost;
+            
+            let areaFactor = 1 + Math.min(2, (area - 120) * 0.005);
+            let pricePerFloor = basePrice * areaFactor;
+            
+            let transportCosts = {
+                "جنين": 600, "سلفيت": 450, "نابلس": 350, "رام الله": 450,
+                "الخليل": 1200, "بيت لحم": 1000, "طوباس": 850, "أريحا": 1000,
+                "طولكرم": 720, "قلقيلية": 720
+            };
+            
+            let selectedCity = document.getElementById('city').value;
+            let transportCost = transportCosts[selectedCity] || 0;
+            
+            if (area > 160) {
+                let extraMeters = Math.floor((area - 160) / 10);
+                let transportIncrease = Math.min(1, extraMeters * 0.05);
+                transportCost *= (1 + transportIncrease);
+            }
+            
+            let totalPrice = (pricePerFloor * floors) + transportCost;
+            
+            document.getElementById('estimated_price').innerText = totalPrice.toFixed(2);
+        }
+    </script>
+</body>
+</html>
