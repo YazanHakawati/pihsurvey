@@ -127,17 +127,30 @@
         transportCost *= (1 + transportIncrease);
     }
 
-    // توزيع تكلفة المواصلات على العناصر
-    let totalCostBeforeTransport = lightingCost + shuttersCost + sensorsCost + voiceAssistantCost + smartEntryCost + premiumSystemCost + boilerButtonCost;
-    let transportPerItem = transportCost / 6; // توزيع المواصلات على 6 عناصر
+    // العناصر الفعالة (التي سيتم توزيع المواصلات عليها)
+    let activeItems = [];
 
-    // إضافة تكلفة المواصلات إلى كل عنصر
-    lightingCost += transportPerItem;
-    shuttersCost += transportPerItem;
-    sensorsCost += transportPerItem;
-    voiceAssistantCost += transportPerItem;
-    smartEntryCost += transportPerItem;
-    premiumSystemCost += transportPerItem;
+    // إضافة العناصر الفعالة إلى المصفوفة
+    if (lightingCost > 0) activeItems.push("lighting");
+    if (shuttersCost > 0) activeItems.push("shutters");
+    if (sensorsCost > 0) activeItems.push("sensors");
+    if (voiceAssistantCost > 0) activeItems.push("voiceAssistant");
+    if (smartEntryCost > 0) activeItems.push("smartEntry");
+    if (premiumSystemCost > 0) activeItems.push("premiumSystem");
+
+    // عدد العناصر الفعالة
+    let numActiveItems = activeItems.length;
+
+    // توزيع تكلفة المواصلات على العناصر الفعالة
+    let transportPerItem = transportCost / numActiveItems;
+
+    // إضافة تكلفة المواصلات إلى كل عنصر فعال
+    if (lightingCost > 0) lightingCost += transportPerItem;
+    if (shuttersCost > 0) shuttersCost += transportPerItem;
+    if (sensorsCost > 0) sensorsCost += transportPerItem;
+    if (voiceAssistantCost > 0) voiceAssistantCost += transportPerItem;
+    if (smartEntryCost > 0) smartEntryCost += transportPerItem;
+    if (premiumSystemCost > 0) premiumSystemCost += transportPerItem;
 
     // السعر الإجمالي
     let totalPrice = lightingCost + shuttersCost + sensorsCost + voiceAssistantCost + smartEntryCost + premiumSystemCost;
