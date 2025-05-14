@@ -44,7 +44,7 @@ body {
 .container {
     max-width: 800px;
     margin: 20px auto;
-    background-color: var(--primary-light);
+    background-color: var(--card-bg);
     padding: 25px 30px;
     border-radius: 12px;
     box-shadow: 0 8px 25px var(--shadow);
@@ -214,7 +214,7 @@ footer {
     margin-bottom: 20px;
 }
 .social-links a {
-    color: var(--primary);
+    color: var(--white);
     font-size: 2rem;
     margin: 0 15px;
     text-decoration: none;
