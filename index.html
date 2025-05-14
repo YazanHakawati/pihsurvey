@@ -5,15 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حاسبة سعر المنزل الذكي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="pihsurvey1.css">
+    <link rel="stylesheet" href="pihsurvey1.css"> {/* افترض أن هذا الملف يحتوي على الأنماط الأساسية */}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
             <img src="P I H.gif" alt="PIH Animated GIF" class="header-main-gif">
-            </header>
+        </header>
         <h2>حاسبة سعر المنزل الذكي</h2>
+
+        <label>مكان السكن:
+            <select id="customer_location_select">
+                <option value="رام الله">رام الله</option>
+                <option value="نابلس" selected>نابلس</option>
+                <option value="سلفيت">سلفيت</option>
+                <option value="الخليل">الخليل</option>
+                <option value="بيت لحم">بيت لحم</option>
+                <option value="جنين">جنين</option>
+                <option value="طولكرم">طولكرم</option>
+                <option value="قلقيلية">قلقيلية</option>
+                <option value="طوباس">طوباس</option>
+                <option value="أخرى">أخرى (سيتم تحديد المواصلات عند التواصل)</option>
+            </select>
+        </label>
+        <label>هل المنزل فيلا؟ <select id="is_villa"><option value="0" selected>لا</option><option value="1">نعم</option></select></label>
+        <hr style="margin: 20px 0;">
 
         <label>عدد الطوابق: <input type="number" id="num_floors" min="1" value="1"></label>
         <label>مساحة الطابق الواحد (م²): <input type="number" id="floor_area" min="50" value="120"></label>
@@ -21,15 +38,15 @@
         <label>عدد الحمامات: <input type="number" id="num_bathrooms" min="0" value="1"></label>
         <label>عدد الصالونات: <input type="number" id="num_salons" min="0" value="1"></label>
         <label>عدد المطابخ: <input type="number" id="num_kitchens" min="0" value="1"></label>
-        <label>عدد الأبجورات الذكية (لكامل المنزل): <input type="number" id="num_total_shutters" min="0" value="4"></label>
+        <label>عدد الأبجورات الذكية (لكامل المنزل، شامل أي أبواب تعمل كأبجورات): <input type="number" id="num_total_shutters" min="0" value="4"></label>
         <hr style="margin: 20px 0;">
 
         <h4>خيارات الأنظمة الإضافية:</h4>
-        <label>حساسات الحركة (إضافية للصالونات): <select id="additional_motion_sensors"><option value="1">نعم</option><option value="0" selected>لا</option></select></label>
+        <label>عدد حساسات الحركة الإضافية (خارج الحمامات): <input type="number" id="num_additional_motion_sensors" min="0" value="0"></label>
+        <label>عدد حساسات الأبواب/النوافذ: <input type="number" id="num_door_window_sensors" min="0" value="0"></label>
         <label>حساسات الغاز (للمطابخ): <select id="gas_sensors"><option value="1">نعم</option><option value="0" selected>لا</option></select></label>
         <label>كبسة بويلر (لكل طابق): <select id="boiler_button_option"><option value="1">نعم</option><option value="0" selected>لا</option></select></label>
-        <label>حساسات أبواب/نوافذ إضافية: <select id="door_sensors_option"><option value="1">نعم (1 لكل طابق)</option><option value="0" selected>لا</option></select></label>
-        <label>حساسات تواجد إضافية (للصالات الكبيرة مثلاً): <select id="presence_sensors_option"><option value="1">نعم (1 لكل صالون)</option><option value="0" selected>لا</option></select></label>
+        <label>حساسات تواجد إضافية (للصالات الكبيرة مثلاً، غير الحمامات): <select id="presence_sensors_option"><option value="1">نعم (1 لكل صالون)</option><option value="0" selected>لا</option></select></label>
         <label>نظام تحكم بالمكيفات (1 لكل غرفة نوم وصالون): <select id="ac_control_option"><option value="1">نعم</option><option value="0" selected>لا</option></select></label>
         <hr style="margin: 20px 0;">
 
@@ -41,7 +58,7 @@
         <hr style="margin: 20px 0;">
         
         <button onclick="calculatePrice()">حساب السعر</button>
-        <button id="downloadPdfButton" style="display:none; margin-top: 10px; background-color: var(--accent);">تحميل الفاتورة PDF</button>
+        <button id="downloadPdfButton" style="display:none; margin-top: 10px; background-color: var(--accent-color, #ff6f61);">تحميل الفاتورة PDF</button>
         
         <h3>السعر الإجمالي المقدر: <span id="estimated_price">-</span> شيكل</h3>
         
@@ -53,7 +70,7 @@
             <p>تكلفة حساسات الغاز: <span id="gas_sensors_inv_cost">0</span> شيكل</p>
             <p>تكلفة كبسات البويلر: <span id="boiler_buttons_inv_cost">0</span> شيكل</p>
             <p>تكلفة حساسات الأبواب/النوافذ: <span id="door_sensors_inv_cost">0</span> شيكل</p>
-            <p>تكلفة حساسات التواجد: <span id="presence_sensors_inv_cost">0</span> شيكل</p>
+            <p>تكلفة حساسات التواجد (تشمل الحمامات): <span id="presence_sensors_inv_cost">0</span> شيكل</p>
             <p>تكلفة حساسات التحكم بالمكيف: <span id="ac_control_inv_cost">0</span> شيكل</p>
             <p>تكلفة أجهزة الراوتر (Zigbee): <span id="zigbee_routers_cost">0</span> شيكل</p>
             <p>تكلفة شاشة التحكم المركزية: <span id="touch_screen_inv_cost">0</span> شيكل</p>
@@ -68,6 +85,7 @@
             <p>تكلفة التركيب: <span id="installation_inv_cost">0</span> شيكل</p>
             <p>تكلفة برمجة تطبيق الهاتف: <span id="mobile_programming_inv_cost">0</span> شيكل</p>
             <p>تكلفة برمجة النظام الصوتي: <span id="voice_programming_inv_cost">0</span> شيكل</p>
+            {/* تم إزالة بند زيادة تكلفة الفيلا من هنا */}
             <hr style="margin: 10px 0;">
             <p><strong>السعر الإجمالي المقدر:</strong> <span id="total_invoice_price">0</span> شيكل</p>
         </div>
@@ -95,73 +113,68 @@
     </footer>
 
     <script>
-        // ... (ITEM_PRICES remains the same) ...
         const ITEM_PRICES = {
-            presence_sensor_zigbee: 80, boiler_switch: 80, motion_sensor_zigbee: 60,
-            shutter_switch_double_zigbee: 80, shutter_switch_single_zigbee: 75,
-            triple_switch_zigbee: 90, quad_switch_zigbee: 95, double_switch_zigbee: 85,
-            zigbee_router: 90, gas_sensor_zigbee: 100, door_sensor_zigbee: 40,
-            single_switch_zigbee: 82, ac_control_zigbee: 60, alexa_pop: 450, touch_screen: 1400
+            presence_sensor_zigbee: 80, // حساس وجود
+            boiler_switch: 80, 
+            motion_sensor_zigbee: 60,   // حساس حركة
+            shutter_switch_double_zigbee: 80, 
+            shutter_switch_single_zigbee: 75,
+            triple_switch_zigbee: 90, 
+            quad_switch_zigbee: 95, 
+            double_switch_zigbee: 85,
+            zigbee_router: 90, 
+            gas_sensor_zigbee: 100, 
+            door_sensor_zigbee: 40,
+            single_switch_zigbee: 82, 
+            ac_control_zigbee: 60, 
+            alexa_pop: 450, 
+            touch_screen: 1400
         };
 
         function initializeInputFields() {
             const numberInputs = document.querySelectorAll('input[type="number"]');
             numberInputs.forEach(input => {
-                const defaultValue = input.getAttribute('value'); // القيمة الافتراضية من HTML
+                const defaultValue = input.getAttribute('value');
                 input.setAttribute('data-default-value', defaultValue);
-
-                // تعيين اللون الرمادي مبدئياً إذا كانت القيمة هي الافتراضية
                 if (input.value === defaultValue) {
                     input.style.color = '#aaa';
                 } else {
-                    input.style.color = 'var(--black)';
+                    input.style.color = 'var(--black, #000)';
                 }
-
                 input.addEventListener('focus', function() {
-                    // عند التركيز، إذا كانت القيمة الحالية هي الافتراضية، قم بحذفها
                     if (this.value === this.getAttribute('data-default-value')) {
                         this.value = '';
                     }
-                    this.style.color = 'var(--black)'; // تغيير اللون إلى الأسود
+                    this.style.color = 'var(--black, #000)';
                 });
-
                 input.addEventListener('blur', function() {
-                    // عند فقدان التركيز، إذا كان الحقل فارغًا، أعد القيمة الافتراضية واللون الرمادي
                     if (this.value.trim() === '') {
                         this.value = this.getAttribute('data-default-value');
                         this.style.color = '#aaa';
                     } else {
-                         this.style.color = 'var(--black)'; // تأكد أن اللون أسود إذا أدخل المستخدم قيمة
+                         this.style.color = 'var(--black, #000)';
                     }
                 });
-                
                 input.addEventListener('input', function() {
-                    // أثناء الكتابة، تأكد أن اللون أسود
-                     this.style.color = 'var(--black)';
+                     this.style.color = 'var(--black, #000)';
                 });
             });
 
-            // สำหรับ SELECT elements، فقط نغير اللون عند التفاعل
             const selects = document.querySelectorAll('select');
             selects.forEach(select => {
-                // اللون الأولي يعتمد على الكلاس placeholder-active الذي يجب أن يتم تعيينه عبر CSS إذا أردنا ذلك
-                // أو نكتفي بتغيير اللون عند التغيير/التركيز
-                select.style.color = 'var(--black)'; // اللون الافتراضي للـ select
-                // إذا كان هناك خيار "placeholder" محدد في الـ HTML، يمكن تلوينه بشكل مختلف
+                select.style.color = 'var(--black, #000)';
                 if (select.options[select.selectedIndex].disabled && select.options[select.selectedIndex].value === "") {
                     select.style.color = '#aaa';
                 }
-
-
                 select.addEventListener('change', function() {
-                    this.style.color = 'var(--black)';
+                    this.style.color = 'var(--black, #000)';
                      if (this.options[this.selectedIndex].disabled && this.options[this.selectedIndex].value === "") {
-                        this.style.color = '#aaa'; // إذا عاد إلى خيار placeholder
+                        this.style.color = '#aaa';
                     }
                 });
                 select.addEventListener('focus', function() {
                      if (!(this.options[this.selectedIndex].disabled && this.options[this.selectedIndex].value === "")) {
-                        this.style.color = 'var(--black)';
+                        this.style.color = 'var(--black, #000)';
                     }
                 });
             });
@@ -170,7 +183,10 @@
         document.addEventListener('DOMContentLoaded', initializeInputFields);
 
         function calculatePrice() {
-            // ... (نفس منطق حساب السعر من الإجابة السابقة) ...
+            // قراءة القيم من حقول الإدخال
+            let customerLocation = document.getElementById('customer_location_select').value;
+            let isVilla = parseInt(document.getElementById('is_villa').value) === 1;
+
             let numFloors = Math.max(1, parseInt(document.getElementById('num_floors').value) || 1);
             let floorArea = Math.max(50, parseInt(document.getElementById('floor_area').value) || 50);
             let numBedrooms = Math.max(0, parseInt(document.getElementById('num_bedrooms').value) || 0);
@@ -179,11 +195,12 @@
             let numKitchens = Math.max(0, parseInt(document.getElementById('num_kitchens').value) || 0);
             let numTotalShutters = Math.max(0, parseInt(document.getElementById('num_total_shutters').value) || 0);
             
-            let wantsAdditionalMotionSensors = parseInt(document.getElementById('additional_motion_sensors').value) === 1;
+            let numAdditionalMotionSensors = parseInt(document.getElementById('num_additional_motion_sensors').value) || 0;
+            let numDoorWindowSensors = parseInt(document.getElementById('num_door_window_sensors').value) || 0;
+
             let wantsGasSensors = parseInt(document.getElementById('gas_sensors').value) === 1;
             let wantsBoilerButton = parseInt(document.getElementById('boiler_button_option').value) === 1;
-            let wantsDoorSensors = parseInt(document.getElementById('door_sensors_option').value) === 1;
-            let wantsPresenceSensors = parseInt(document.getElementById('presence_sensors_option').value) === 1;
+            let wantsPresenceSensorsOption = parseInt(document.getElementById('presence_sensors_option').value) === 1; // لحساسات الصالونات
             let wantsAcControl = parseInt(document.getElementById('ac_control_option').value) === 1;
 
             let wantsTouchScreen = parseInt(document.getElementById('touch_screen_option').value) === 1;
@@ -193,28 +210,39 @@
 
             let quantities = {
                 quad_switch_zigbee: 0, triple_switch_zigbee: 0, shutter_switch_single_zigbee: 0,
-                motion_sensor_zigbee: 0, boiler_switch: 0, gas_sensor_zigbee: 0,
+                motion_sensor_zigbee: 0, // حساسات الحركة الإضافية فقط
+                presence_sensor_zigbee: 0, // حساسات الوجود (الحمامات + الصالونات)
+                boiler_switch: 0, gas_sensor_zigbee: 0,
                 zigbee_router: 0, alexa_pop: 0, touch_screen: 0, door_sensor_zigbee: 0,
-                presence_sensor_zigbee: 0, ac_control_zigbee: 0
+                ac_control_zigbee: 0
             };
 
             let costs = {
-                lighting_switches: 0, shutter_switches: 0, motion_sensors: 0, gas_sensors: 0,
-                boiler_buttons: 0, door_sensors: 0, presence_sensors: 0, ac_control: 0,
+                lighting_switches: 0, shutter_switches: 0, motion_sensors: 0, presence_sensors: 0, gas_sensors: 0,
+                boiler_buttons: 0, door_sensors: 0, ac_control: 0,
                 zigbee_routers: 0, touch_screen: 0, voice_assistant: 0, smart_entry: 0,
-                premium_system: 0, installation: 0, mobile_programming: 0, voice_programming: 0
+                premium_system: 0, installation: 0, mobile_programming: 0, voice_programming: 0,
+                villa_surcharge: 0 
             };
 
             quantities.quad_switch_zigbee += numSalons * 3;
             quantities.triple_switch_zigbee += numBedrooms * 2;
-            quantities.triple_switch_zigbee += numBathrooms * 1;
+            quantities.triple_switch_zigbee += numBathrooms * 1; 
             quantities.shutter_switch_single_zigbee = numTotalShutters;
-            quantities.motion_sensor_zigbee += numBathrooms * 1;
-            if (wantsAdditionalMotionSensors) quantities.motion_sensor_zigbee += numSalons * 1;
+            
+            // حساسات الحركة الإضافية (خارج الحمامات)
+            quantities.motion_sensor_zigbee = numAdditionalMotionSensors;
+            
+            // حساسات الوجود: للحمامات بشكل أساسي + الصالونات إذا تم اختيارها
+            quantities.presence_sensor_zigbee += numBathrooms * 1; // حساس وجود لكل حمام
+            if (wantsPresenceSensorsOption) {
+                quantities.presence_sensor_zigbee += numSalons * 1; // حساس وجود إضافي لكل صالون
+            }
+            
+            quantities.door_sensor_zigbee = numDoorWindowSensors;
+
             if (wantsBoilerButton) quantities.boiler_switch += numFloors * 1;
             if (wantsGasSensors) quantities.gas_sensor_zigbee += numKitchens * 1;
-            if (wantsDoorSensors) quantities.door_sensor_zigbee += numFloors * 1;
-            if (wantsPresenceSensors) quantities.presence_sensor_zigbee += numSalons * 1;
             if (wantsAcControl) quantities.ac_control_zigbee += numBedrooms + numSalons;
             if (wantsTouchScreen) quantities.touch_screen = 1;
 
@@ -227,19 +255,20 @@
             
             let totalZigbeeDevices = quantities.quad_switch_zigbee + quantities.triple_switch_zigbee +
                                      quantities.shutter_switch_single_zigbee + quantities.motion_sensor_zigbee +
+                                     quantities.presence_sensor_zigbee + // إضافة حساسات الوجود هنا
                                      quantities.boiler_switch + quantities.gas_sensor_zigbee + 
-                                     quantities.door_sensor_zigbee + quantities.presence_sensor_zigbee +
-                                     quantities.ac_control_zigbee;
+                                     quantities.door_sensor_zigbee + quantities.ac_control_zigbee;
             if (totalZigbeeDevices > 0) quantities.zigbee_router = Math.max(1, numFloors);
+
 
             costs.lighting_switches = (quantities.quad_switch_zigbee * ITEM_PRICES.quad_switch_zigbee) +
                                       (quantities.triple_switch_zigbee * ITEM_PRICES.triple_switch_zigbee);
             costs.shutter_switches = quantities.shutter_switch_single_zigbee * ITEM_PRICES.shutter_switch_single_zigbee;
             costs.motion_sensors = quantities.motion_sensor_zigbee * ITEM_PRICES.motion_sensor_zigbee;
+            costs.presence_sensors = quantities.presence_sensor_zigbee * ITEM_PRICES.presence_sensor_zigbee; // تكلفة حساسات الوجود
             costs.gas_sensors = quantities.gas_sensor_zigbee * ITEM_PRICES.gas_sensor_zigbee;
             costs.boiler_buttons = quantities.boiler_switch * ITEM_PRICES.boiler_switch;
             costs.door_sensors = quantities.door_sensor_zigbee * ITEM_PRICES.door_sensor_zigbee;
-            costs.presence_sensors = quantities.presence_sensor_zigbee * ITEM_PRICES.presence_sensor_zigbee;
             costs.ac_control = quantities.ac_control_zigbee * ITEM_PRICES.ac_control_zigbee;
             costs.zigbee_routers = quantities.zigbee_router * ITEM_PRICES.zigbee_router;
             costs.touch_screen = quantities.touch_screen * ITEM_PRICES.touch_screen;
@@ -249,8 +278,8 @@
             if (wantsPremiumSystem) costs.premium_system = 3000; 
 
             let itemsSubtotal = costs.lighting_switches + costs.shutter_switches + costs.motion_sensors +
-                                costs.gas_sensors + costs.boiler_buttons + costs.door_sensors +
-                                costs.presence_sensors + costs.ac_control + costs.zigbee_routers +
+                                costs.presence_sensors + costs.gas_sensors + costs.boiler_buttons + costs.door_sensors +
+                                costs.ac_control + costs.zigbee_routers +
                                 costs.touch_screen + costs.voice_assistant;
 
             let totalArea = floorArea * numFloors;
@@ -263,17 +292,65 @@
                 estimatedWorkDays = 6;
             }
 
-            costs.installation = estimatedWorkDays * 300;
-            costs.mobile_programming = (estimatedWorkDays / 2) * 350;
-            costs.voice_programming = wantsVoiceAssistant ? costs.mobile_programming : 0;
-            
-            let totalPrice = itemsSubtotal + costs.smart_entry + costs.premium_system + 
-                             costs.installation + costs.mobile_programming + costs.voice_programming;
+            // تحديد تكلفة المواصلات اليومية بناءً على الموقع
+            let dailyTransportRate = 0;
+            switch (customerLocation) {
+                case 'رام الله': case 'نابلس': case 'سلفيت':
+                    dailyTransportRate = 100;
+                    break;
+                case 'الخليل': case 'بيت لحم':
+                    dailyTransportRate = 250;
+                    break;
+                case 'جنين': case 'طولكرم': case 'قلقيلية':
+                    dailyTransportRate = 200;
+                    break;
+                case 'طوباس':
+                    dailyTransportRate = 150;
+                    break;
+                case 'أخرى': // إذا كانت "أخرى"، لا يتم احتساب مواصلات تلقائياً
+                    dailyTransportRate = 0; 
+                    if (estimatedWorkDays > 0) { // فقط إذا كان هناك عمل فعلي
+                         // يمكن إضافة تنبيه هنا إذا لزم الأمر
+                        // alert("لم يتم احتساب تكلفة مواصلات لمنطقة 'أخرى'. سيتم تحديدها عند التواصل.");
+                    }
+                    break;
+                default:
+                    dailyTransportRate = 0;
+            }
+            let totalTransportationCost = dailyTransportRate * estimatedWorkDays;
 
+            // التكاليف الأساسية للتركيب والبرمجة
+            let baseInstallationCost = estimatedWorkDays * 300;
+            let baseMobileProgrammingCost = (estimatedWorkDays / 2) * 350;
+            let baseVoiceProgrammingCost = wantsVoiceAssistant ? baseMobileProgrammingCost : 0;
+
+            // توزيع تكلفة المواصلات
+            costs.installation = baseInstallationCost;
+            costs.mobile_programming = baseMobileProgrammingCost;
+            costs.voice_programming = baseVoiceProgrammingCost;
+
+            let totalBaseServiceCostForTransport = baseInstallationCost + baseMobileProgrammingCost + baseVoiceProgrammingCost;
+
+            if (totalTransportationCost > 0 && totalBaseServiceCostForTransport > 0) {
+                costs.installation += totalTransportationCost * (baseInstallationCost / totalBaseServiceCostForTransport);
+                costs.mobile_programming += totalTransportationCost * (baseMobileProgrammingCost / totalBaseServiceCostForTransport);
+                costs.voice_programming += totalTransportationCost * (baseVoiceProgrammingCost / totalBaseServiceCostForTransport);
+            }
+            
+            let subtotalBeforeVillaSurcharge = itemsSubtotal + costs.smart_entry + costs.premium_system + 
+                                              costs.installation + costs.mobile_programming + costs.voice_programming;
+
+            if (isVilla) {
+                costs.villa_surcharge = subtotalBeforeVillaSurcharge * 0.10;
+            }
+
+            let totalPrice = subtotalBeforeVillaSurcharge + costs.villa_surcharge;
+
+            // عرض النتائج
             document.getElementById('estimated_price').innerText = totalPrice.toFixed(0);
             const invoiceDiv = document.getElementById('invoice');
             invoiceDiv.style.display = 'block';
-            document.getElementById('downloadPdfButton').style.display = 'block'; // إظهار زر تحميل الـ PDF
+            document.getElementById('downloadPdfButton').style.display = 'block';
 
             document.getElementById('lighting_switches_cost').innerText = costs.lighting_switches.toFixed(0);
             document.getElementById('shutter_switches_cost').innerText = costs.shutter_switches.toFixed(0);
@@ -293,10 +370,10 @@
             document.getElementById('installation_inv_cost').innerText = costs.installation.toFixed(0);
             document.getElementById('mobile_programming_inv_cost').innerText = costs.mobile_programming.toFixed(0);
             document.getElementById('voice_programming_inv_cost').innerText = costs.voice_programming.toFixed(0);
+            // لا يتم عرض تكلفة الفيلا كبند منفصل
             document.getElementById('total_invoice_price').innerText = totalPrice.toFixed(0);
         }
 
-        // دالة تحميل الفاتورة كـ PDF
         function downloadInvoicePDF() {
             const invoiceElement = document.getElementById('invoice');
             if (!invoiceElement || invoiceElement.style.display === 'none') {
@@ -304,58 +381,47 @@
                 return;
             }
 
-            // إضافة عنوان مؤقت للفاتورة قبل التحويل (اختياري، لتحسين شكل الـ PDF)
             const headerClone = document.querySelector('header').cloneNode(true);
-            const h2Clone = document.querySelector('h2').cloneNode(true);
-            h2Clone.innerText = "فاتورة تقديرية - نظام المنزل الذكي PIH"; // عنوان مخصص للـ PDF
-            h2Clone.style.textAlign = 'center';
-            h2Clone.style.marginBottom = '20px';
+            const h2Clone = document.querySelector('h2'); 
+            const h2PdfClone = h2Clone ? h2Clone.cloneNode(true) : document.createElement('h2');
+            h2PdfClone.innerText = "فاتورة تقديرية - نظام المنزل الذكي PIH"; 
+            h2PdfClone.style.textAlign = 'center';
+            h2PdfClone.style.marginBottom = '20px';
             
             const tempContainer = document.createElement('div');
-            tempContainer.appendChild(headerClone); // إضافة نسخة من الشعار
-            tempContainer.appendChild(h2Clone);
+            tempContainer.appendChild(headerClone);
+            tempContainer.appendChild(h2PdfClone);
             
-            // نسخ محتوى الفاتورة الأصلي
             const invoiceContentClone = invoiceElement.cloneNode(true);
-            // إزالة زر التحميل نفسه من النسخة إذا كان داخل الفاتورة (ليس الحال هنا)
-            // invoiceContentClone.querySelector('#downloadPdfButton')?.remove(); 
             tempContainer.appendChild(invoiceContentClone);
 
-
             const opt = {
-                margin:       [10, 10, 15, 10], // top, left, bottom, right in mm
+                margin:       [10, 10, 15, 10], 
                 filename:     'فاتورة_منزل_ذكي_PIH.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 }, // scrollY:0 to capture only visible part if needed
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
             };
 
-            // لجعل الخطوط العربية تظهر بشكل صحيح، قد تحتاج إلى التأكد من تضمينها أو استخدام خطوط متوافقة
-            // html2pdf.js يحاول التقاط الأنماط، ولكن الخطوط المعقدة قد تكون تحديًا.
-            // إضافة CSS مباشرة لضمان الاتجاه الصحيح والخط داخل العنصر المراد تحويله
             tempContainer.style.direction = 'rtl';
-            tempContainer.style.fontFamily = "'Almarai', sans-serif";
+            tempContainer.style.fontFamily = "Arial, 'Helvetica Neue', Helvetica, sans-serif"; 
             
-            // إضافة الـ disclaimer للـ PDF
             const disclaimerClone = document.getElementById('disclaimer').cloneNode(true);
             disclaimerClone.style.marginTop = "20px";
-            disclaimerClone.style.fontSize = "10px"; // تصغير الخط في الـ PDF
+            disclaimerClone.style.fontSize = "10px"; 
             tempContainer.appendChild(disclaimerClone);
-
 
             html2pdf().from(tempContainer).set(opt).save();
         }
 
-        // ربط دالة التحميل بالزر
         document.addEventListener('DOMContentLoaded', () => {
             const downloadButton = document.getElementById('downloadPdfButton');
             if (downloadButton) {
                 downloadButton.addEventListener('click', downloadInvoicePDF);
             }
-            initializeInputFields(); // تأكد من استدعائها هنا بعد تعريفها
+            initializeInputFields();
         });
-
     </script>
 </body>
 </html>
