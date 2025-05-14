@@ -189,6 +189,98 @@ button:hover {
 #disclaimer a:hover {
     color: #491217;
 }
+/* ... (الأنماط السابقة من pihsurvey1.css تبقى كما هي) ... */
+
+/* --- Header GIF & Logo Styles --- */
+header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-top: 20px; /* Add some padding at the top of the header */
+}
+
+.header-main-gif {
+    max-width: 120px; /* حجم مناسب للـ GIF المتحرك كشعار رئيسي */
+    max-height: 120px;
+    height: auto;
+    margin-bottom: 10px; /* مسافة بين الـ GIF والشعار الآخر إذا وجد */
+    border-radius: 8px; /* Optional: if the GIF has a background */
+}
+
+.logo img.header-cover-image { /* لتطبيق الأنماط على صورة PIH_Cover.png */
+    max-width: 250px; /* يمكن تعديل الحجم حسب الحاجة */
+    height: auto;
+    display: block; /* لضمان التوسيط إذا كان margin auto يعمل */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* --- Footer Styles (To match product page) --- */
+footer {
+  background-color: rgba(55, 143, 133, 0.8); /* --primary-dark with transparency */
+  text-align: center;
+  padding: 30px 0; /* Increased padding */
+  font-size: 0.95rem; /* Slightly adjusted font size */
+  color: var(--white);
+  margin-top: 40px; /* Space before footer */
+  border-top: 3px solid var(--primary-medium); /* Top border for separation */
+}
+
+.social-links {
+    margin-bottom: 20px; /* Space below social icons */
+}
+
+.social-links a {
+    color: var(--white);
+    font-size: 2rem; /* Larger icons */
+    margin: 0 15px; /* Spacing between icons */
+    text-decoration: none;
+    transition: color 0.3s, transform 0.3s;
+}
+
+.social-links a:hover {
+    color: var(--primary-light); /* Highlight color on hover */
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+footer a.footer-link { /* Class for the PIH link in copyright */
+    color: var(--white);
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+footer a.footer-link:hover {
+    color: var(--primary-light);
+    text-decoration: none;
+}
+
+/* Responsive for footer */
+@media (max-width: 768px) {
+    .social-links a {
+        font-size: 1.8rem;
+        margin: 0 10px;
+    }
+    footer {
+        padding: 20px 0;
+        font-size: 0.85rem;
+    }
+    footer p {
+        font-size: 0.8rem;
+    }
+    .header-main-gif {
+        max-width: 100px;
+        max-height: 100px;
+    }
+    .logo img.header-cover-image {
+        max-width: 200px;
+    }
+}
+/* ... (بقية الأنماط من pihsurvey1.css) ... */
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
