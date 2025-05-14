@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حاسبة سعر المنزل الذكي</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <link rel="stylesheet" href="pihsurvey1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="pihsurvey1.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
             <img src="P I H.gif" alt="PIH Animated GIF" class="header-main-gif">
-            <div class="logo">
-                <img src="PIH_Cover.png" alt="PIH Logo" class="header-cover-image">
-            </div>
-        </header>
+            </header>
         <h2>حاسبة سعر المنزل الذكي</h2>
 
         <label>عدد الطوابق: <input type="number" id="num_floors" min="1" value="1"></label>
@@ -42,6 +41,7 @@
         <hr style="margin: 20px 0;">
         
         <button onclick="calculatePrice()">حساب السعر</button>
+        <button id="downloadPdfButton" style="display:none; margin-top: 10px; background-color: var(--accent);">تحميل الفاتورة PDF</button>
         
         <h3>السعر الإجمالي المقدر: <span id="estimated_price">-</span> شيكل</h3>
         
@@ -95,96 +95,82 @@
     </footer>
 
     <script>
+        // ... (ITEM_PRICES remains the same) ...
         const ITEM_PRICES = {
-            presence_sensor_zigbee: 80,
-            boiler_switch: 80,
-            motion_sensor_zigbee: 60,
-            shutter_switch_double_zigbee: 80,
-            shutter_switch_single_zigbee: 75,
-            triple_switch_zigbee: 90,
-            quad_switch_zigbee: 95,
-            double_switch_zigbee: 85,
-            zigbee_router: 90,
-            gas_sensor_zigbee: 100,
-            door_sensor_zigbee: 40,
-            single_switch_zigbee: 82,
-            ac_control_zigbee: 60,
-            alexa_pop: 450,
-            touch_screen: 1400
+            presence_sensor_zigbee: 80, boiler_switch: 80, motion_sensor_zigbee: 60,
+            shutter_switch_double_zigbee: 80, shutter_switch_single_zigbee: 75,
+            triple_switch_zigbee: 90, quad_switch_zigbee: 95, double_switch_zigbee: 85,
+            zigbee_router: 90, gas_sensor_zigbee: 100, door_sensor_zigbee: 40,
+            single_switch_zigbee: 82, ac_control_zigbee: 60, alexa_pop: 450, touch_screen: 1400
         };
 
-        function setInitialInputColors() {
-            const inputs = document.querySelectorAll('input[type="number"], select');
-            inputs.forEach(input => {
-                input.classList.add('placeholder-active'); // Apply gray color initially
+        function initializeInputFields() {
+            const numberInputs = document.querySelectorAll('input[type="number"]');
+            numberInputs.forEach(input => {
+                const defaultValue = input.getAttribute('value'); // القيمة الافتراضية من HTML
+                input.setAttribute('data-default-value', defaultValue);
 
-                input.addEventListener('focus', function() {
-                    this.classList.remove('placeholder-active');
-                    this.style.color = 'var(--black)'; // Ensure color is black on focus
-                });
-                input.addEventListener('change', function() { // For selects and after number input blur
-                    this.classList.remove('placeholder-active');
-                    this.style.color = 'var(--black)';
-                    if (this.value === "" && this.type === 'number' && this.defaultValue) {
-                        // Potentially re-add placeholder if empty, but user might want it black
-                    }
-                });
-                 input.addEventListener('input', function() { // For numbers as user types
-                    this.classList.remove('placeholder-active');
-                    this.style.color = 'var(--black)';
-                });
-
-                // Ensure initial non-focused state is gray if it has default value
-                if (document.activeElement !== input) {
-                     // Check if current value is the default from HTML attribute
-                    if (input.tagName === 'INPUT' && input.value === input.getAttribute('value')) {
-                         input.style.color = '#aaa';
-                    } else if (input.tagName === 'SELECT') {
-                        // For selects, if the selected option is the one initially marked 'selected'
-                        // This is harder to track without knowing which option was initially selected via HTML
-                        // The classList.add('placeholder-active') should handle the initial state via CSS
-                    }
+                // تعيين اللون الرمادي مبدئياً إذا كانت القيمة هي الافتراضية
+                if (input.value === defaultValue) {
+                    input.style.color = '#aaa';
                 } else {
-                     input.style.color = 'var(--black)'; // If somehow focused on load
+                    input.style.color = 'var(--black)';
                 }
 
-            });
-        }
-        // Simplified placeholder styling logic
-        function initializeInputFields() {
-            const inputs = document.querySelectorAll('input[type="number"], select');
-            inputs.forEach(input => {
-                // Set initial color to gray
-                input.style.color = '#aaa';
-                input.setAttribute('data-hadfocus', 'false');
-
-
                 input.addEventListener('focus', function() {
-                    this.style.color = 'var(--black)'; // Change to black on focus
-                    this.setAttribute('data-hadfocus', 'true');
+                    // عند التركيز، إذا كانت القيمة الحالية هي الافتراضية، قم بحذفها
+                    if (this.value === this.getAttribute('data-default-value')) {
+                        this.value = '';
+                    }
+                    this.style.color = 'var(--black)'; // تغيير اللون إلى الأسود
                 });
 
-                input.addEventListener('change', function() {
-                    this.style.color = 'var(--black)'; // Ensure it's black after change
-                    this.setAttribute('data-hadfocus', 'true');
+                input.addEventListener('blur', function() {
+                    // عند فقدان التركيز، إذا كان الحقل فارغًا، أعد القيمة الافتراضية واللون الرمادي
+                    if (this.value.trim() === '') {
+                        this.value = this.getAttribute('data-default-value');
+                        this.style.color = '#aaa';
+                    } else {
+                         this.style.color = 'var(--black)'; // تأكد أن اللون أسود إذا أدخل المستخدم قيمة
+                    }
                 });
                 
-                input.addEventListener('input', function() { // For numbers as user types
-                    this.style.color = 'var(--black)';
-                    this.setAttribute('data-hadfocus', 'true');
+                input.addEventListener('input', function() {
+                    // أثناء الكتابة، تأكد أن اللون أسود
+                     this.style.color = 'var(--black)';
                 });
+            });
 
-                // Optional: If you want to revert to gray if the field is blurred and unchanged from its initial default
-                // This is more complex and might not be desired if the user explicitly sets the default value.
-                // For now, once focused/changed, it stays black.
+            // สำหรับ SELECT elements، فقط نغير اللون عند التفاعل
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                // اللون الأولي يعتمد على الكلاس placeholder-active الذي يجب أن يتم تعيينه عبر CSS إذا أردنا ذلك
+                // أو نكتفي بتغيير اللون عند التغيير/التركيز
+                select.style.color = 'var(--black)'; // اللون الافتراضي للـ select
+                // إذا كان هناك خيار "placeholder" محدد في الـ HTML، يمكن تلوينه بشكل مختلف
+                if (select.options[select.selectedIndex].disabled && select.options[select.selectedIndex].value === "") {
+                    select.style.color = '#aaa';
+                }
+
+
+                select.addEventListener('change', function() {
+                    this.style.color = 'var(--black)';
+                     if (this.options[this.selectedIndex].disabled && this.options[this.selectedIndex].value === "") {
+                        this.style.color = '#aaa'; // إذا عاد إلى خيار placeholder
+                    }
+                });
+                select.addEventListener('focus', function() {
+                     if (!(this.options[this.selectedIndex].disabled && this.options[this.selectedIndex].value === "")) {
+                        this.style.color = 'var(--black)';
+                    }
+                });
             });
         }
         
         document.addEventListener('DOMContentLoaded', initializeInputFields);
 
-
         function calculatePrice() {
-            // --- استخلاص المدخلات ---
+            // ... (نفس منطق حساب السعر من الإجابة السابقة) ...
             let numFloors = Math.max(1, parseInt(document.getElementById('num_floors').value) || 1);
             let floorArea = Math.max(50, parseInt(document.getElementById('floor_area').value) || 50);
             let numBedrooms = Math.max(0, parseInt(document.getElementById('num_bedrooms').value) || 0);
@@ -285,7 +271,10 @@
                              costs.installation + costs.mobile_programming + costs.voice_programming;
 
             document.getElementById('estimated_price').innerText = totalPrice.toFixed(0);
-            document.getElementById('invoice').style.display = 'block';
+            const invoiceDiv = document.getElementById('invoice');
+            invoiceDiv.style.display = 'block';
+            document.getElementById('downloadPdfButton').style.display = 'block'; // إظهار زر تحميل الـ PDF
+
             document.getElementById('lighting_switches_cost').innerText = costs.lighting_switches.toFixed(0);
             document.getElementById('shutter_switches_cost').innerText = costs.shutter_switches.toFixed(0);
             document.getElementById('motion_sensors_cost').innerText = costs.motion_sensors.toFixed(0);
@@ -306,6 +295,67 @@
             document.getElementById('voice_programming_inv_cost').innerText = costs.voice_programming.toFixed(0);
             document.getElementById('total_invoice_price').innerText = totalPrice.toFixed(0);
         }
+
+        // دالة تحميل الفاتورة كـ PDF
+        function downloadInvoicePDF() {
+            const invoiceElement = document.getElementById('invoice');
+            if (!invoiceElement || invoiceElement.style.display === 'none') {
+                alert('يرجى حساب السعر أولاً لعرض الفاتورة.');
+                return;
+            }
+
+            // إضافة عنوان مؤقت للفاتورة قبل التحويل (اختياري، لتحسين شكل الـ PDF)
+            const headerClone = document.querySelector('header').cloneNode(true);
+            const h2Clone = document.querySelector('h2').cloneNode(true);
+            h2Clone.innerText = "فاتورة تقديرية - نظام المنزل الذكي PIH"; // عنوان مخصص للـ PDF
+            h2Clone.style.textAlign = 'center';
+            h2Clone.style.marginBottom = '20px';
+            
+            const tempContainer = document.createElement('div');
+            tempContainer.appendChild(headerClone); // إضافة نسخة من الشعار
+            tempContainer.appendChild(h2Clone);
+            
+            // نسخ محتوى الفاتورة الأصلي
+            const invoiceContentClone = invoiceElement.cloneNode(true);
+            // إزالة زر التحميل نفسه من النسخة إذا كان داخل الفاتورة (ليس الحال هنا)
+            // invoiceContentClone.querySelector('#downloadPdfButton')?.remove(); 
+            tempContainer.appendChild(invoiceContentClone);
+
+
+            const opt = {
+                margin:       [10, 10, 15, 10], // top, left, bottom, right in mm
+                filename:     'فاتورة_منزل_ذكي_PIH.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 }, // scrollY:0 to capture only visible part if needed
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            // لجعل الخطوط العربية تظهر بشكل صحيح، قد تحتاج إلى التأكد من تضمينها أو استخدام خطوط متوافقة
+            // html2pdf.js يحاول التقاط الأنماط، ولكن الخطوط المعقدة قد تكون تحديًا.
+            // إضافة CSS مباشرة لضمان الاتجاه الصحيح والخط داخل العنصر المراد تحويله
+            tempContainer.style.direction = 'rtl';
+            tempContainer.style.fontFamily = "'Almarai', sans-serif";
+            
+            // إضافة الـ disclaimer للـ PDF
+            const disclaimerClone = document.getElementById('disclaimer').cloneNode(true);
+            disclaimerClone.style.marginTop = "20px";
+            disclaimerClone.style.fontSize = "10px"; // تصغير الخط في الـ PDF
+            tempContainer.appendChild(disclaimerClone);
+
+
+            html2pdf().from(tempContainer).set(opt).save();
+        }
+
+        // ربط دالة التحميل بالزر
+        document.addEventListener('DOMContentLoaded', () => {
+            const downloadButton = document.getElementById('downloadPdfButton');
+            if (downloadButton) {
+                downloadButton.addEventListener('click', downloadInvoicePDF);
+            }
+            initializeInputFields(); // تأكد من استدعائها هنا بعد تعريفها
+        });
+
     </script>
 </body>
 </html>
