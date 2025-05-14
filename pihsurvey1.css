@@ -44,7 +44,7 @@ body {
 .container {
     max-width: 800px;
     margin: 20px auto;
-    background-color: var(--card-bg);
+    background-color: var(--primary-light);
     padding: 25px 30px;
     border-radius: 12px;
     box-shadow: 0 8px 25px var(--shadow);
