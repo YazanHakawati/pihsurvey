@@ -229,12 +229,12 @@ footer p {
     font-size: 0.9rem;
 }
 footer a.footer-link {
-    color: var(--primary);
+    color: var(--primary-light);
     text-decoration: underline;
     font-weight: bold;
 }
 footer a.footer-link:hover {
-    color: var(--primary);
+    color: var(--white);
     text-decoration: none;
 }
 
