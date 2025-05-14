@@ -242,7 +242,7 @@ footer a.footer-link {
     font-weight: bold;
 }
 footer a.footer-link:hover {
-    color: var(--primary-light);
+    color: var(--white);
     text-decoration: none;
 }
 
