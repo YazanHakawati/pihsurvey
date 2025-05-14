@@ -89,7 +89,16 @@ select {
     color: var(--black);
     transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+input[type="number"].placeholder-active,
+select.placeholder-active {
+    color: #aaa; /* لون رمادي فاتح للقيم الأولية */
+}
 
+input[type="number"],
+select {
+    /* اللون الافتراضي عند الكتابة سيكون لون النص العادي المحدد في body أو .container */
+    color: var(--black); /* تأكد أن هذا هو اللون عند الكتابة */
+}
 input[type="number"]:focus,
 select:focus {
     border-color: var(--primary-medium);
