@@ -372,54 +372,82 @@
             document.getElementById('total_invoice_price').innerText = totalPrice.toFixed(0);
         }
 
-        function downloadInvoicePDF() {
-            const invoiceElement = document.getElementById('invoice');
-            if (!invoiceElement || invoiceElement.style.display === 'none') {
-                alert('يرجى حساب السعر أولاً لعرض الفاتورة.');
-                return;
-            }
+        function downloadInvoicePDF() {
+            const invoiceElement = document.getElementById('invoice');
+            if (!invoiceElement || invoiceElement.style.display === 'none') {
+                alert('يرجى حساب السعر أولاً لعرض الفاتورة.');
+                return;
+            }
 
-            const headerClone = document.querySelector('header').cloneNode(true);
-            const h2Clone = document.querySelector('h2'); 
-            const h2PdfClone = h2Clone ? h2Clone.cloneNode(true) : document.createElement('h2');
-            h2PdfClone.innerText = "فاتورة تقديرية - نظام المنزل الذكي PIH"; 
-            h2PdfClone.style.textAlign = 'center';
-            h2PdfClone.style.marginBottom = '20px';
-            
-            const tempContainer = document.createElement('div');
-            tempContainer.appendChild(headerClone);
-            tempContainer.appendChild(h2PdfClone);
-            
-            const invoiceContentClone = invoiceElement.cloneNode(true);
-            tempContainer.appendChild(invoiceContentClone);
+            const headerClone = document.querySelector('header').cloneNode(true);
+            const h2Clone = document.querySelector('h2');
+            const h2PdfClone = h2Clone ? h2Clone.cloneNode(true) : document.createElement('h2');
+            h2PdfClone.innerText = "فاتورة تقديرية - نظام المنزل الذكي PIH";
+            h2PdfClone.style.textAlign = 'center';
+            h2PdfClone.style.marginBottom = '20px';
 
-            const opt = {
-                margin:       [10, 10, 15, 10], 
-                filename:     'فاتورة_منزل_ذكي_PIH.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
-            };
+            const tempContainer = document.createElement('div');
+            tempContainer.appendChild(headerClone);
+            tempContainer.appendChild(h2PdfClone);
 
-            tempContainer.style.direction = 'rtl';
-            tempContainer.style.fontFamily = "Arial, 'Helvetica Neue', Helvetica, sans-serif"; 
-            
-            const disclaimerClone = document.getElementById('disclaimer').cloneNode(true);
-            disclaimerClone.style.marginTop = "20px";
-            disclaimerClone.style.fontSize = "10px"; 
-            tempContainer.appendChild(disclaimerClone);
+            // --- Start: Add House Details Section ---
+            const houseDetailsDiv = document.createElement('div');
+            houseDetailsDiv.innerHTML = `
+                <h4>تفاصيل المنزل:</h4>
+                <p>مكان السكن: ${document.getElementById('customer_location_select').value}</p>
+                <p>هل المنزل مستقل(فيلا خاصّة)؟ ${document.getElementById('is_villa').options[document.getElementById('is_villa').selectedIndex].text}</p>
+                <p>عدد الطوابق: ${document.getElementById('num_floors').value}</p>
+                <p>مساحة الطابق الواحد (م²): ${document.getElementById('floor_area').value}</p>
+                <p>عدد غرف النوم: ${document.getElementById('num_bedrooms').value}</p>
+                <p>عدد الحمامات: ${document.getElementById('num_bathrooms').value}</p>
+                <p>عدد الصالونات: ${document.getElementById('num_salons').value}</p>
+                <p>عدد المطابخ: ${document.getElementById('num_kitchens').value}</p>
+                <p>عدد الأبجورات الذكية: ${document.getElementById('num_total_shutters').value}</p>
+                <p>عدد حساسات الحركة الإضافية: ${document.getElementById('num_additional_motion_sensors').value}</p>
+                <p>عدد حساسات الأبواب/النوافذ: ${document.getElementById('num_door_window_sensors').value}</p>
+                <p>حساسات الغاز: ${document.getElementById('gas_sensors').options[document.getElementById('gas_sensors').selectedIndex].text}</p>
+                <p>كبسة بويلر (لكل طابق): ${document.getElementById('boiler_button_option').options[document.getElementById('boiler_button_option').selectedIndex].text}</p>
+                <p>حساسات تواجد إضافية: ${document.getElementById('presence_sensors_option').options[document.getElementById('presence_sensors_option').selectedIndex].text}</p>
+                <p>نظام تحكم بالمكيفات: ${document.getElementById('ac_control_option').options[document.getElementById('ac_control_option').selectedIndex].text}</p>
+                <p>شاشة تحكم لمس مركزية: ${document.getElementById('touch_screen_option').options[document.getElementById('touch_screen_option').selectedIndex].text}</p>
+                <p>المساعد الصوتي (أليكسا): ${document.getElementById('voice_assistant').options[document.getElementById('voice_assistant').selectedIndex].text}</p>
+                <p>نظام الدخول الذكي: ${document.getElementById('smart_entry').options[document.getElementById('smart_entry').selectedIndex].text}</p>
+                <p>نظام بريميوم PIH: ${document.getElementById('premium_system').options[document.getElementById('premium_system').selectedIndex].text}</p>
+                <hr style="margin: 20px 0;">
+            `;
+            tempContainer.appendChild(houseDetailsDiv);
+            // --- End: Add House Details Section ---
 
-            html2pdf().from(tempContainer).set(opt).save();
-        }
+            const invoiceContentClone = invoiceElement.cloneNode(true);
+            tempContainer.appendChild(invoiceContentClone);
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const downloadButton = document.getElementById('downloadPdfButton');
-            if (downloadButton) {
-                downloadButton.addEventListener('click', downloadInvoicePDF);
-            }
-            initializeInputFields();
-        });
+            const opt = {
+                margin:       [10, 10, 15, 10],
+                filename:     'فاتورة_منزل_ذكي_PIH.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, letterRendering: true, scrollY: 0 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            tempContainer.style.direction = 'rtl';
+            tempContainer.style.fontFamily = "Arial, 'Helvetica Neue', Helvetica, sans-serif";
+
+            const disclaimerClone = document.getElementById('disclaimer').cloneNode(true);
+            disclaimerClone.style.marginTop = "20px";
+            disclaimerClone.style.fontSize = "10px";
+            tempContainer.appendChild(disclaimerClone);
+
+            html2pdf().from(tempContainer).set(opt).save();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const downloadButton = document.getElementById('downloadPdfButton');
+            if (downloadButton) {
+                downloadButton.addEventListener('click', downloadInvoicePDF);
+            }
+            initializeInputFields();
+        });
     </script>
 </body>
 </html>
