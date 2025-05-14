@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حاسبة سعر المنزل الذكي</title>
-    <link rel="stylesheet" href="pihsurvey1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <link rel="stylesheet" href="pihsurvey1.css">
 </head>
 <body>
     <div class="container">
         <header>
+            <img src="P I H.gif" alt="PIH Animated GIF" class="header-main-gif">
             <div class="logo">
-                <img src="PIH_Cover.png" alt="PIH Logo">
+                <img src="PIH_Cover.png" alt="PIH Logo" class="header-cover-image">
             </div>
         </header>
         <h2>حاسبة سعر المنزل الذكي</h2>
@@ -80,6 +81,19 @@
         </div>
     </div>
 
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="https://www.instagram.com/pih_smart/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61572959214078" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.linkedin.com/company/palestine-intelligent-homes" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://wa.me/972566334569" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="mailto:info@palestineintelligent.homes" aria-label="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+            <p>© <script>document.write(new Date().getFullYear())</script> كل الحقوق محفوظة - Palestine Intelligent Homes | تم التطوير بواسطة <a href="https://www.palestineintelligent.homes/" target="_blank" class="footer-link">PIH</a></p>
+        </div>
+    </footer>
+
     <script>
         const ITEM_PRICES = {
             presence_sensor_zigbee: 80,
@@ -99,59 +113,70 @@
             touch_screen: 1400
         };
 
-        // Function to set initial placeholder color and handle input changes
-        function initializeInputFields() {
+        function setInitialInputColors() {
             const inputs = document.querySelectorAll('input[type="number"], select');
             inputs.forEach(input => {
-                // Apply placeholder style if value is the default or input is empty (for selects)
-                if (input.value === input.defaultValue || (input.tagName === 'SELECT' && input.selectedIndex === 0 && input.options[0].value === input.options[0].text) ) {
-                    // For selects, we're assuming the first option if 'selected' is often a placeholder or default
-                    // More robustly, one might check against a 'data-default-value' attribute.
-                    // For now, direct value check for numbers, and for selects, if they have a default selected index and it's the first.
-                     if (input.type === 'number' && input.value === input.getAttribute('value')) { // Check against HTML attribute 'value'
-                        input.classList.add('placeholder-active');
-                    } else if (input.tagName === 'SELECT' && input.options[input.selectedIndex].defaultSelected) {
-                         // This is complex, for selects we will just ensure they have a color on focus/change
-                    }
-                }
-                // Simplified: Apply placeholder class to all initially. Remove on focus/change.
-                input.classList.add('placeholder-active');
-
+                input.classList.add('placeholder-active'); // Apply gray color initially
 
                 input.addEventListener('focus', function() {
                     this.classList.remove('placeholder-active');
+                    this.style.color = 'var(--black)'; // Ensure color is black on focus
                 });
                 input.addEventListener('change', function() { // For selects and after number input blur
                     this.classList.remove('placeholder-active');
-                     if(this.value === "" && this.type === 'number' && this.defaultValue) { // If cleared and had a default
-                        // this.classList.add('placeholder-active'); // Re-apply if needed, but generally not
+                    this.style.color = 'var(--black)';
+                    if (this.value === "" && this.type === 'number' && this.defaultValue) {
+                        // Potentially re-add placeholder if empty, but user might want it black
                     }
                 });
                  input.addEventListener('input', function() { // For numbers as user types
                     this.classList.remove('placeholder-active');
+                    this.style.color = 'var(--black)';
                 });
-                // If select is changed back to its "default" visually (often the first option)
-                if (input.tagName === 'SELECT') {
-                    input.setAttribute('data-initial-value', input.value);
-                    input.addEventListener('blur', function() {
-                        if (this.value === this.getAttribute('data-initial-value') && !this.classList.contains('user-interacted')) {
-                           // this.classList.add('placeholder-active'); // Optional: re-gray if back to initial default
-                        }
-                    });
-                    input.addEventListener('change', function() {
-                        this.classList.add('user-interacted'); // Mark that user has changed it
-                    });
-                } else if (input.type === 'number') {
-                     input.setAttribute('data-initial-value', input.value);
-                     input.addEventListener('blur', function() {
-                        if (this.value === this.getAttribute('data-initial-value') && !this.classList.contains('user-interacted')) {
-                           // this.classList.add('placeholder-active'); // Optional: re-gray if back to initial default
-                        }
-                    });
-                     input.addEventListener('input', function() {
-                        this.classList.add('user-interacted');
-                    });
+
+                // Ensure initial non-focused state is gray if it has default value
+                if (document.activeElement !== input) {
+                     // Check if current value is the default from HTML attribute
+                    if (input.tagName === 'INPUT' && input.value === input.getAttribute('value')) {
+                         input.style.color = '#aaa';
+                    } else if (input.tagName === 'SELECT') {
+                        // For selects, if the selected option is the one initially marked 'selected'
+                        // This is harder to track without knowing which option was initially selected via HTML
+                        // The classList.add('placeholder-active') should handle the initial state via CSS
+                    }
+                } else {
+                     input.style.color = 'var(--black)'; // If somehow focused on load
                 }
+
+            });
+        }
+        // Simplified placeholder styling logic
+        function initializeInputFields() {
+            const inputs = document.querySelectorAll('input[type="number"], select');
+            inputs.forEach(input => {
+                // Set initial color to gray
+                input.style.color = '#aaa';
+                input.setAttribute('data-hadfocus', 'false');
+
+
+                input.addEventListener('focus', function() {
+                    this.style.color = 'var(--black)'; // Change to black on focus
+                    this.setAttribute('data-hadfocus', 'true');
+                });
+
+                input.addEventListener('change', function() {
+                    this.style.color = 'var(--black)'; // Ensure it's black after change
+                    this.setAttribute('data-hadfocus', 'true');
+                });
+                
+                input.addEventListener('input', function() { // For numbers as user types
+                    this.style.color = 'var(--black)';
+                    this.setAttribute('data-hadfocus', 'true');
+                });
+
+                // Optional: If you want to revert to gray if the field is blurred and unchanged from its initial default
+                // This is more complex and might not be desired if the user explicitly sets the default value.
+                // For now, once focused/changed, it stays black.
             });
         }
         
@@ -166,7 +191,7 @@
             let numBathrooms = Math.max(0, parseInt(document.getElementById('num_bathrooms').value) || 0);
             let numSalons = Math.max(0, parseInt(document.getElementById('num_salons').value) || 0);
             let numKitchens = Math.max(0, parseInt(document.getElementById('num_kitchens').value) || 0);
-            let numTotalShutters = Math.max(0, parseInt(document.getElementById('num_total_shutters').value) || 0); // تعديل هنا
+            let numTotalShutters = Math.max(0, parseInt(document.getElementById('num_total_shutters').value) || 0);
             
             let wantsAdditionalMotionSensors = parseInt(document.getElementById('additional_motion_sensors').value) === 1;
             let wantsGasSensors = parseInt(document.getElementById('gas_sensors').value) === 1;
@@ -180,81 +205,37 @@
             let wantsSmartEntry = parseInt(document.getElementById('smart_entry').value) === 1;
             let wantsPremiumSystem = parseInt(document.getElementById('premium_system').value) === 1;
 
-            // --- تهيئة متغيرات التكلفة والكميات ---
             let quantities = {
-                quad_switch_zigbee: 0,
-                triple_switch_zigbee: 0,
-                shutter_switch_single_zigbee: 0,
-                motion_sensor_zigbee: 0,
-                boiler_switch: 0,
-                gas_sensor_zigbee: 0,
-                zigbee_router: 0,
-                alexa_pop: 0,
-                touch_screen: 0,
-                door_sensor_zigbee: 0,
-                presence_sensor_zigbee: 0,
-                ac_control_zigbee: 0
+                quad_switch_zigbee: 0, triple_switch_zigbee: 0, shutter_switch_single_zigbee: 0,
+                motion_sensor_zigbee: 0, boiler_switch: 0, gas_sensor_zigbee: 0,
+                zigbee_router: 0, alexa_pop: 0, touch_screen: 0, door_sensor_zigbee: 0,
+                presence_sensor_zigbee: 0, ac_control_zigbee: 0
             };
 
             let costs = {
-                lighting_switches: 0,
-                shutter_switches: 0,
-                motion_sensors: 0,
-                gas_sensors: 0,
-                boiler_buttons: 0,
-                door_sensors: 0,
-                presence_sensors: 0,
-                ac_control: 0,
-                zigbee_routers: 0,
-                touch_screen: 0,
-                voice_assistant: 0,
-                smart_entry: 0,
-                premium_system: 0,
-                installation: 0,
-                mobile_programming: 0,
-                voice_programming: 0
+                lighting_switches: 0, shutter_switches: 0, motion_sensors: 0, gas_sensors: 0,
+                boiler_buttons: 0, door_sensors: 0, presence_sensors: 0, ac_control: 0,
+                zigbee_routers: 0, touch_screen: 0, voice_assistant: 0, smart_entry: 0,
+                premium_system: 0, installation: 0, mobile_programming: 0, voice_programming: 0
             };
 
-            // --- حساب الكميات ---
             quantities.quad_switch_zigbee += numSalons * 3;
             quantities.triple_switch_zigbee += numBedrooms * 2;
             quantities.triple_switch_zigbee += numBathrooms * 1;
-
-            quantities.shutter_switch_single_zigbee = numTotalShutters; // استخدام الإجمالي مباشرة
-
+            quantities.shutter_switch_single_zigbee = numTotalShutters;
             quantities.motion_sensor_zigbee += numBathrooms * 1;
-            if (wantsAdditionalMotionSensors) {
-                quantities.motion_sensor_zigbee += numSalons * 1;
-            }
-
-            if (wantsBoilerButton) {
-                quantities.boiler_switch += numFloors * 1;
-            }
-
-            if (wantsGasSensors) {
-                quantities.gas_sensor_zigbee += numKitchens * 1;
-            }
-            
-            if (wantsDoorSensors) {
-                quantities.door_sensor_zigbee += numFloors * 1;
-            }
-
-            if (wantsPresenceSensors) {
-                quantities.presence_sensor_zigbee += numSalons * 1;
-            }
-            
-            if (wantsAcControl) {
-                quantities.ac_control_zigbee += numBedrooms + numSalons;
-            }
-
-            if (wantsTouchScreen) {
-                quantities.touch_screen = 1;
-            }
+            if (wantsAdditionalMotionSensors) quantities.motion_sensor_zigbee += numSalons * 1;
+            if (wantsBoilerButton) quantities.boiler_switch += numFloors * 1;
+            if (wantsGasSensors) quantities.gas_sensor_zigbee += numKitchens * 1;
+            if (wantsDoorSensors) quantities.door_sensor_zigbee += numFloors * 1;
+            if (wantsPresenceSensors) quantities.presence_sensor_zigbee += numSalons * 1;
+            if (wantsAcControl) quantities.ac_control_zigbee += numBedrooms + numSalons;
+            if (wantsTouchScreen) quantities.touch_screen = 1;
 
             if (wantsVoiceAssistant) {
                 let alexaUnits = 1;
                 if (numFloors > 1) alexaUnits += (numFloors - 1);
-                else if (floorArea * numFloors > 200) alexaUnits = 2;
+                else if (floorArea * numFloors > 200 && numFloors === 1) alexaUnits = 2;
                 quantities.alexa_pop = alexaUnits;
             }
             
@@ -263,12 +244,8 @@
                                      quantities.boiler_switch + quantities.gas_sensor_zigbee + 
                                      quantities.door_sensor_zigbee + quantities.presence_sensor_zigbee +
                                      quantities.ac_control_zigbee;
+            if (totalZigbeeDevices > 0) quantities.zigbee_router = Math.max(1, numFloors);
 
-            if (totalZigbeeDevices > 0) {
-                 quantities.zigbee_router = Math.max(1, numFloors);
-            }
-
-            // --- حساب تكلفة كل فئة من القطع ---
             costs.lighting_switches = (quantities.quad_switch_zigbee * ITEM_PRICES.quad_switch_zigbee) +
                                       (quantities.triple_switch_zigbee * ITEM_PRICES.triple_switch_zigbee);
             costs.shutter_switches = quantities.shutter_switch_single_zigbee * ITEM_PRICES.shutter_switch_single_zigbee;
@@ -282,45 +259,32 @@
             costs.touch_screen = quantities.touch_screen * ITEM_PRICES.touch_screen;
             costs.voice_assistant = quantities.alexa_pop * ITEM_PRICES.alexa_pop;
 
-            if (wantsSmartEntry) {
-                costs.smart_entry = 962; 
-            }
-            if (wantsPremiumSystem) {
-                costs.premium_system = 3000; 
-            }
+            if (wantsSmartEntry) costs.smart_entry = 962; 
+            if (wantsPremiumSystem) costs.premium_system = 3000; 
 
             let itemsSubtotal = costs.lighting_switches + costs.shutter_switches + costs.motion_sensors +
                                 costs.gas_sensors + costs.boiler_buttons + costs.door_sensors +
                                 costs.presence_sensors + costs.ac_control + costs.zigbee_routers +
                                 costs.touch_screen + costs.voice_assistant;
 
-            // --- حساب تكاليف العمل والبرمجة ---
             let totalArea = floorArea * numFloors;
             let estimatedWorkDays = 0;
             if (totalArea <= 170) {
                 estimatedWorkDays = 3;
-            } else if (totalArea > 170 && totalArea <= 180) { // من 171 إلى 180
+            } else if (totalArea > 170 && totalArea <= 180) {
                 estimatedWorkDays = 4;
-            } else { // أكثر من 180
+            } else { 
                 estimatedWorkDays = 6;
             }
 
             costs.installation = estimatedWorkDays * 300;
             costs.mobile_programming = (estimatedWorkDays / 2) * 350;
-            if (wantsVoiceAssistant) {
-                costs.voice_programming = costs.mobile_programming;
-            } else {
-                costs.voice_programming = 0;
-            }
+            costs.voice_programming = wantsVoiceAssistant ? costs.mobile_programming : 0;
             
-            // --- حساب السعر الإجمالي ---
             let totalPrice = itemsSubtotal + costs.smart_entry + costs.premium_system + 
                              costs.installation + costs.mobile_programming + costs.voice_programming;
-            // لا يتم إضافة تكلفة المواصلات هنا
 
-            // --- عرض النتائج والفاتورة ---
             document.getElementById('estimated_price').innerText = totalPrice.toFixed(0);
-
             document.getElementById('invoice').style.display = 'block';
             document.getElementById('lighting_switches_cost').innerText = costs.lighting_switches.toFixed(0);
             document.getElementById('shutter_switches_cost').innerText = costs.shutter_switches.toFixed(0);
@@ -333,17 +297,13 @@
             document.getElementById('zigbee_routers_cost').innerText = costs.zigbee_routers.toFixed(0);
             document.getElementById('touch_screen_inv_cost').innerText = costs.touch_screen.toFixed(0);
             document.getElementById('voice_assistant_inv_cost').innerText = costs.voice_assistant.toFixed(0);
-            
             document.getElementById('items_subtotal_cost').innerText = itemsSubtotal.toFixed(0);
-
             document.getElementById('smart_entry_inv_cost').innerText = costs.smart_entry.toFixed(0);
             document.getElementById('premium_system_inv_cost').innerText = costs.premium_system.toFixed(0);
-            
             document.getElementById('estimated_work_days_inv').innerText = estimatedWorkDays;
             document.getElementById('installation_inv_cost').innerText = costs.installation.toFixed(0);
             document.getElementById('mobile_programming_inv_cost').innerText = costs.mobile_programming.toFixed(0);
             document.getElementById('voice_programming_inv_cost').innerText = costs.voice_programming.toFixed(0);
-            // تم حذف المواصلات من الفاتورة
             document.getElementById('total_invoice_price').innerText = totalPrice.toFixed(0);
         }
     </script>
