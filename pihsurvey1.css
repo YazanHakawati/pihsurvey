@@ -26,7 +26,7 @@
 }
 
 body {
-    background: linear-gradient(-45deg, #e0f7fa, #b2ebf2, #80deea, #4dd0e1); /* Lighter gradient */
+    background: linear-gradient(-45deg, #e0f7fa, #b2ebf2, #80deea, #4dd0e1);
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
     color: var(--black);
@@ -50,15 +50,24 @@ body {
     box-shadow: 0 8px 25px var(--shadow);
 }
 
+/* --- Header Styles --- */
 header {
     text-align: center;
     margin-bottom: 25px;
+    padding-top: 10px;
 }
 
-.logo img {
-    max-width: 200px;
+.header-main-gif {
+    max-width: 120px;
+    max-height: 120px;
     height: auto;
+    margin-bottom: 15px; /* زادت المسافة السفلية قليلاً */
+    border-radius: 8px;
+    display: block; /* لضمان التوسيط الأفقي */
+    margin-left: auto;
+    margin-right: auto;
 }
+/* تم حذف .logo img.header-cover-image لأنه تم حذف العنصر من HTML */
 
 h2, h3, h4 {
     color: var(--primary-dark);
@@ -86,30 +95,21 @@ select {
     border-radius: 8px;
     background-color: var(--input-bg);
     font-size: 1rem;
-    color: var(--black);
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-input[type="number"].placeholder-active,
-select.placeholder-active {
-    color: #aaa; /* لون رمادي فاتح للقيم الأولية */
+    /* color: var(--black); سيتم التحكم به عبر JS للقيم الأولية */
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
-input[type="number"],
-select {
-    /* اللون الافتراضي عند الكتابة سيكون لون النص العادي المحدد في body أو .container */
-    color: var(--black); /* تأكد أن هذا هو اللون عند الكتابة */
-}
 input[type="number"]:focus,
 select:focus {
     border-color: var(--primary-medium);
     box-shadow: 0 0 0 0.2rem rgba(79, 179, 169, 0.25);
     outline: none;
+    color: var(--black); /* تأكيد اللون الأسود عند التركيز */
 }
 
-/* Spacing between label and its input/select */
 label > input[type="number"],
 label > select {
-    margin-right: 0; /* For RTL, if there was any left margin */
+    margin-right: 0;
 }
 
 button {
@@ -127,10 +127,16 @@ button {
     margin-top: 25px;
     margin-bottom: 20px;
 }
-
 button:hover {
     background-color: var(--button-hover-bg);
 }
+button#downloadPdfButton { /* تنسيق خاص لزر تحميل الـ PDF */
+    background-color: var(--accent);
+}
+button#downloadPdfButton:hover {
+    background-color: var(--primary-dark);
+}
+
 
 /* --- Results & Invoice --- */
 #estimated_price {
@@ -145,6 +151,9 @@ button:hover {
     background-color: var(--gray-light);
     border-radius: 8px;
     border: 1px solid var(--gray-medium);
+    /* Added for PDF generation if styles are not captured well by html2pdf */
+    font-family: 'Almarai', sans-serif;
+    direction: rtl;
 }
 
 #invoice h4 {
@@ -163,104 +172,78 @@ button:hover {
 #invoice p span {
     font-weight: bold;
     color: var(--accent);
+    text-align: left; /* Ensure numbers align left if needed */
+    min-width: 60px; /* Ensure some space for numbers */
+    display: inline-block;
 }
 
 /* --- Disclaimer --- */
 #disclaimer {
     margin-top: 25px;
     padding: 15px;
-    background-color: #fff3cd; /* Light yellow for warning */
+    background-color: #fff3cd;
     border: 1px solid #ffeeba;
     border-radius: 8px;
     text-align: center;
 }
-
 #disclaimer p {
-    color: #856404; /* Darker yellow/brown for text */
+    color: #856404;
     font-size: 0.9rem;
     margin: 0;
 }
-
 #disclaimer a {
-    color: #721c24; /* Dark red for link */
+    color: #721c24;
     font-weight: bold;
     text-decoration: underline;
 }
 #disclaimer a:hover {
     color: #491217;
 }
-/* ... (الأنماط السابقة من pihsurvey1.css تبقى كما هي) ... */
 
-/* --- Header GIF & Logo Styles --- */
-header {
-    text-align: center;
-    margin-bottom: 25px;
-    padding-top: 20px; /* Add some padding at the top of the header */
-}
-
-.header-main-gif {
-    max-width: 120px; /* حجم مناسب للـ GIF المتحرك كشعار رئيسي */
-    max-height: 120px;
-    height: auto;
-    margin-bottom: 10px; /* مسافة بين الـ GIF والشعار الآخر إذا وجد */
-    border-radius: 8px; /* Optional: if the GIF has a background */
-}
-
-.logo img.header-cover-image { /* لتطبيق الأنماط على صورة PIH_Cover.png */
-    max-width: 250px; /* يمكن تعديل الحجم حسب الحاجة */
-    height: auto;
-    display: block; /* لضمان التوسيط إذا كان margin auto يعمل */
-    margin-left: auto;
-    margin-right: auto;
-}
-
-
-/* --- Footer Styles (To match product page) --- */
+/* --- Footer Styles --- */
 footer {
-  background-color: rgba(55, 143, 133, 0.8); /* --primary-dark with transparency */
+  background-color: rgba(55, 143, 133, 0.8);
   text-align: center;
-  padding: 30px 0; /* Increased padding */
-  font-size: 0.95rem; /* Slightly adjusted font size */
+  padding: 30px 0;
+  font-size: 0.95rem;
   color: var(--white);
-  margin-top: 40px; /* Space before footer */
-  border-top: 3px solid var(--primary-medium); /* Top border for separation */
+  margin-top: 40px;
+  border-top: 3px solid var(--primary-medium);
 }
-
 .social-links {
-    margin-bottom: 20px; /* Space below social icons */
+    margin-bottom: 20px;
 }
-
 .social-links a {
     color: var(--white);
-    font-size: 2rem; /* Larger icons */
-    margin: 0 15px; /* Spacing between icons */
+    font-size: 2rem;
+    margin: 0 15px;
     text-decoration: none;
     transition: color 0.3s, transform 0.3s;
 }
-
 .social-links a:hover {
-    color: var(--primary-light); /* Highlight color on hover */
-    transform: scale(1.1); /* Slight zoom effect */
+    color: var(--primary-light);
+    transform: scale(1.1);
 }
-
 footer p {
     margin: 0;
     font-size: 0.9rem;
 }
-
-footer a.footer-link { /* Class for the PIH link in copyright */
+footer a.footer-link {
     color: var(--white);
     text-decoration: underline;
     font-weight: bold;
 }
-
 footer a.footer-link:hover {
     color: var(--primary-light);
     text-decoration: none;
 }
 
-/* Responsive for footer */
+/* --- Responsive Design --- */
 @media (max-width: 768px) {
+    .header-main-gif {
+        max-width: 100px;
+        max-height: 100px;
+    }
     .social-links a {
         font-size: 1.8rem;
         margin: 0 10px;
@@ -272,30 +255,12 @@ footer a.footer-link:hover {
     footer p {
         font-size: 0.8rem;
     }
-    .header-main-gif {
-        max-width: 100px;
-        max-height: 100px;
-    }
-    .logo img.header-cover-image {
-        max-width: 200px;
-    }
 }
-/* ... (بقية الأنماط من pihsurvey1.css) ... */
-
-/* Responsive adjustments */
 @media (max-width: 600px) {
     .container {
         padding: 20px 15px;
     }
-    h2 {
-        font-size: 1.5rem;
-    }
-    input[type="number"],
-    select,
-    button {
-        font-size: 0.95rem;
-    }
-    label {
-        font-size: 0.9rem;
-    }
+    h2 { font-size: 1.5rem; }
+    input[type="number"], select, button { font-size: 0.95rem; }
+    label { font-size: 0.9rem; }
 }
