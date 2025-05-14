@@ -214,14 +214,14 @@ footer {
     margin-bottom: 20px;
 }
 .social-links a {
-    color: var(--white);
+    color: var(--primary-light);
     font-size: 2rem;
     margin: 0 15px;
     text-decoration: none;
     transition: color 0.3s, transform 0.3s;
 }
 .social-links a:hover {
-    color: var(--primary-light);
+    color: var(--white);
     transform: scale(1.1);
 }
 footer p {
