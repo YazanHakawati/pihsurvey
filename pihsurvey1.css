@@ -221,7 +221,7 @@ footer {
     transition: color 0.3s, transform 0.3s;
 }
 .social-links a:hover {
-    color: var(--white);
+    color: var(--primary);
     transform: scale(1.1);
 }
 footer p {
