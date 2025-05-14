@@ -214,7 +214,7 @@ footer {
     margin-bottom: 20px;
 }
 .social-links a {
-    color: var(--primary-light);
+    color: var(--primary);
     font-size: 2rem;
     margin: 0 15px;
     text-decoration: none;
@@ -229,12 +229,12 @@ footer p {
     font-size: 0.9rem;
 }
 footer a.footer-link {
-    color: var(--primary-light);
+    color: var(--primary);
     text-decoration: underline;
     font-weight: bold;
 }
 footer a.footer-link:hover {
-    color: var(--white);
+    color: var(--primary);
     text-decoration: none;
 }
 
