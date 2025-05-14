@@ -49,6 +49,14 @@ body {
     border-radius: 12px;
     box-shadow: 0 8px 25px var(--shadow);
 }
+.container_a {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: var(--primary);
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px var(--shadow);
+}
 
 /* --- Header Styles --- */
 header {
@@ -229,12 +237,12 @@ footer p {
     font-size: 0.9rem;
 }
 footer a.footer-link {
-    color: var(--primary-light);
+    color: var(--white);
     text-decoration: underline;
     font-weight: bold;
 }
 footer a.footer-link:hover {
-    color: var(--white);
+    color: var(--primary-light);
     text-decoration: none;
 }
 
