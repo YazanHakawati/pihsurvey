@@ -390,35 +390,72 @@
             tempContainer.appendChild(headerClone);
             tempContainer.appendChild(h2PdfClone);
 
-            // --- Start: Add House Details Section ---
+            // --- Start: Add House Details Section with replicated styles ---
             const houseDetailsDiv = document.createElement('div');
+            // Apply styles found in #invoice CSS rule
+            houseDetailsDiv.style.marginTop = '20px';
+            houseDetailsDiv.style.padding = '20px';
+            houseDetailsDiv.style.backgroundColor = '#f5f5f5'; // Value of --gray-light
+            houseDetailsDiv.style.borderRadius = '8px';
+            houseDetailsDiv.style.border = '1px solid #e0e0e0'; // Value of --gray-medium
+            houseDetailsDiv.style.fontFamily = "'Almarai', sans-serif"; // Explicit font
+            houseDetailsDiv.style.direction = 'rtl'; // Explicit direction
+
+            // Styles for the values inside <p> tags, matching #invoice p span
+            const valueSpanStyle = "font-weight: bold; color: #297d72; text-align: left; min-width: 60px; display: inline-block;"; // Value of --accent
+
             houseDetailsDiv.innerHTML = `
-                <h4>تفاصيل المنزل:</h4>
-                <p>مكان السكن: ${document.getElementById('customer_location_select').value}</p>
-                <p>هل المنزل مستقل(فيلا خاصّة)؟ ${document.getElementById('is_villa').options[document.getElementById('is_villa').selectedIndex].text}</p>
-                <p>عدد الطوابق: ${document.getElementById('num_floors').value}</p>
-                <p>مساحة الطابق الواحد (م²): ${document.getElementById('floor_area').value}</p>
-                <p>عدد غرف النوم: ${document.getElementById('num_bedrooms').value}</p>
-                <p>عدد الحمامات: ${document.getElementById('num_bathrooms').value}</p>
-                <p>عدد الصالونات: ${document.getElementById('num_salons').value}</p>
-                <p>عدد المطابخ: ${document.getElementById('num_kitchens').value}</p>
-                <p>عدد الأبجورات الذكية: ${document.getElementById('num_total_shutters').value}</p>
-                <p>عدد حساسات الحركة الإضافية (خارج الحمامات): ${document.getElementById('num_additional_motion_sensors').value}</p>
-                <p>عدد حساسات الأبواب/النوافذ: ${document.getElementById('num_door_window_sensors').value}</p>
-                <p>حساسات الغاز (للمطابخ): ${document.getElementById('gas_sensors').options[document.getElementById('gas_sensors').selectedIndex].text}</p>
-                <p>كبسة بويلر (لكل طابق): ${document.getElementById('boiler_button_option').options[document.getElementById('boiler_button_option').selectedIndex].text}</p>
-                <p>حساسات تواجد إضافية (للصالات الكبيرة مثلاً، غير الحمامات): ${document.getElementById('presence_sensors_option').options[document.getElementById('presence_sensors_option').selectedIndex].text}</p>
-                <p>نظام تحكم بالمكيفات (1 لكل غرفة نوم وصالون): ${document.getElementById('ac_control_option').options[document.getElementById('ac_control_option').selectedIndex].text}</p>
-                <p>شاشة تحكم لمس مركزية: ${document.getElementById('touch_screen_option').options[document.getElementById('touch_screen_option').selectedIndex].text}</p>
-                <p>المساعد الصوتي (أليكسا): ${document.getElementById('voice_assistant').options[document.getElementById('voice_assistant').selectedIndex].text}</p>
-                <p>نظام الدخول الذكي: ${document.getElementById('smart_entry').options[document.getElementById('smart_entry').selectedIndex].text}</p>
-                <p>نظام بريميوم PIH (يشمل جوانب متقدمة إضافية): ${document.getElementById('premium_system').options[document.getElementById('premium_system').selectedIndex].text}</p>
-                <hr style="margin: 10px 0;"> `;
+                <h4 style="color: #378f85; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #e0e0e0; margin-top: 0;">تفاصيل المنزل:</h4>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">مكان السكن: <span style="${valueSpanStyle}">${document.getElementById('customer_location_select').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">هل المنزل مستقل(فيلا خاصّة)؟ <span style="${valueSpanStyle}">${document.getElementById('is_villa').options[document.getElementById('is_villa').selectedIndex].text}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">عدد الطوابق: <span style="${valueSpanStyle}">${document.getElementById('num_floors').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">مساحة الطابق الواحد (م²): <span style="${valueSpanStyle}">${document.getElementById('floor_area').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">عدد غرف النوم: <span style="${valueSpanStyle}">${document.getElementById('num_bedrooms').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">عدد الحمامات: <span style="${valueSpanStyle}">${document.getElementById('num_bathrooms').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">عدد الصالونات: <span style="${valueSpanStyle}">${document.getElementById('num_salons').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">عدد المطابخ: <span style="${valueSpanStyle}">${document.getElementById('num_kitchens').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">عدد الأبجورات الذكية: <span style="${valueSpanStyle}">${document.getElementById('num_total_shutters').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">عدد حساسات الحركة الإضافية (خارج الحمامات): <span style="${valueSpanStyle}">${document.getElementById('num_additional_motion_sensors').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">عدد حساسات الأبواب/النوافذ: <span style="${valueSpanStyle}">${document.getElementById('num_door_window_sensors').value}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">حساسات الغاز (للمطابخ): <span style="${valueSpanStyle}">${document.getElementById('gas_sensors').options[document.getElementById('gas_sensors').selectedIndex].text}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">كبسة بويلر (لكل طابق): <span style="${valueSpanStyle}">${document.getElementById('boiler_button_option').options[document.getElementById('boiler_button_option').selectedIndex].text}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">حساسات تواجد إضافية (للصالات الكبيرة مثلاً، غير الحمامات): <span style="${valueSpanStyle}">${document.getElementById('presence_sensors_option').options[document.getElementById('presence_sensors_option').selectedIndex].text}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">نظام تحكم بالمكيفات (1 لكل غرفة نوم وصالون): <span style="${valueSpanStyle}">${document.getElementById('ac_control_option').options[document.getElementById('ac_control_option').selectedIndex].text}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">شاشة تحكم لمس مركزية: <span style="${valueSpanStyle}">${document.getElementById('touch_screen_option').options[document.getElementById('touch_screen_option').selectedIndex].text}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">المساعد الصوتي (أليكسا): <span style="${valueSpanStyle}">${document.getElementById('voice_assistant').options[document.getElementById('voice_assistant').selectedIndex].text}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">نظام الدخول الذكي: <span style="${valueSpanStyle}">${document.getElementById('smart_entry').options[document.getElementById('smart_entry').selectedIndex].text}</span></p>
+                <p style="margin-bottom: 8px; font-size: 0.95rem; display: flex; justify-content: space-between;">نظام بريميوم PIH (يشمل جوانب متقدمة إضافية): <span style="${valueSpanStyle}">${document.getElementById('premium_system').options[document.getElementById('premium_system').selectedIndex].text}</span></p>
+                <hr style="margin: 10px 0; border: none; border-top: 1px solid #e0e0e0;">
+            `;
             tempContainer.appendChild(houseDetailsDiv);
             // --- End: Add House Details Section ---
 
 
             const invoiceContentClone = invoiceElement.cloneNode(true);
+            // Apply flex/justify styles to invoice p tags just in case cloneNode doesn't capture them well
+            invoiceContentClone.querySelectorAll('p').forEach(p => {
+                p.style.display = 'flex';
+                p.style.justifyContent = 'space-between';
+                p.style.marginBottom = '8px'; // Ensure p margin is consistent
+                p.style.fontSize = '0.95rem'; // Ensure p font size is consistent
+            });
+            // Apply styles to invoice h4 just in case
+            const invoiceH4 = invoiceContentClone.querySelector('h4');
+            if(invoiceH4) {
+                invoiceH4.style.color = '#378f85';
+                invoiceH4.style.marginBottom = '15px';
+                invoiceH4.style.paddingBottom = '10px';
+                invoiceH4.style.borderBottom = '1px solid #e0e0e0';
+            }
+            // Apply styles to invoice spans just in case
+            invoiceContentClone.querySelectorAll('p span').forEach(span => {
+                span.style.fontWeight = 'bold';
+                span.style.color = '#297d72';
+                span.style.textAlign = 'left';
+                span.style.minWidth = '60px';
+                span.style.display = 'inline-block';
+            });
+
             tempContainer.appendChild(invoiceContentClone);
 
             const opt = {
@@ -431,12 +468,17 @@
             };
 
             tempContainer.style.direction = 'rtl';
-            tempContainer.style.fontFamily = "Arial, 'Helvetica Neue', Helvetica, sans-serif";
+            tempContainer.style.fontFamily = "Arial, 'Helvetica Neue', Helvetica, sans-serif"; // Keep as fallback
 
             const disclaimerClone = document.getElementById('disclaimer').cloneNode(true);
             disclaimerClone.style.marginTop = "20px";
             disclaimerClone.style.fontSize = "10px";
             tempContainer.appendChild(disclaimerClone);
+
+            // Add a specific font for the PDF if Almarai is not embedded correctly
+            // html2pdf might need help with custom fonts. Using Arial as a potentially safer option for PDF.
+            tempContainer.style.fontFamily = "Arial, sans-serif";
+
 
             html2pdf().from(tempContainer).set(opt).save();
         }
